@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import time
+
 import curses
 from curses.textpad import Textbox, rectangle
 from datetime import datetime
@@ -14,6 +16,7 @@ def main(stdscr):
     while True:
         stdscr.addstr(2,2, "{:%H:%M:%S}".format(datetime.now()))
         stdscr.refresh()
+        time.sleep(0.1)
 
 if __name__ == "__main__":
     stdscr = curses.initscr()
