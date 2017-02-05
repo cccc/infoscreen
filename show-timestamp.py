@@ -2,6 +2,8 @@
 
 import time
 
+from musicpd import (MPDClient, CommandError)
+
 import paho.mqtt.client as mqtt
 
 import curses
@@ -28,15 +30,18 @@ def main(stdscr):
     mqttc.on_message = on_message
     mqttc.subscribe("club/status",2)
 
+    mclient = MPDClient()
     
     timewin = curses.newwin(5,30, 1,1)
-    statuswin = curses.newwin(1,30,1,30)
+    statuswin = curses.newwin(1,20,1,25)
+    mpdwin = curses.newwin(6,70, 7, 1)
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
     
     while True:
         timewin.erase()
         statuswin.erase()
+        mpdwin.erase()
         timewin.addstr(0, 0, "Current time:")
         rectangle(timewin, 1,0, 3, 11)
         timewin.addstr(2,2, "{:%H:%M:%S}".format(datetime.now()))
@@ -44,8 +49,17 @@ def main(stdscr):
             statuswin.addstr(0,0, "Club is open!", curses.color_pair(2))
         else:
             statuswin.addstr(0,0, "Club is closed!", curses.color_pair(1))
+        mpdwin.addstr(0,0, "Now Playing:")
+        rectangle(mpdwin,1,0,3,59)
+        try:
+            mclient.connect("localhost", 6600)
+            mpdwin.addstr(2,2,mclient.currentsong().get('file',0))
+            mclient.disconnect()
+        except SocketError:
+            mpdwin.addstr(2,2,"Keine Verbindung zum MPD!", curses.color_pair(1));
         timewin.refresh()
         statuswin.refresh()
+        mpdwin.refresh()
         time.sleep(0.1)
 
 if __name__ == "__main__":
