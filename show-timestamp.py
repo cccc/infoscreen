@@ -19,3 +19,4 @@ if __name__ == "__main__":
     stdscr = curses.initscr()
     curses.noecho()
     main(stdscr)
+    curses.endwin()
