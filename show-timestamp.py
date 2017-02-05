@@ -3,7 +3,7 @@
 import curses
 from curses.textpad import Textbox, rectangle
 from datetime import datetime
-
+from curses import wrapper
 
 def main(stdscr):
     stdscr.addstr(0, 0, "Current time:")
@@ -16,7 +16,4 @@ def main(stdscr):
         stdscr.refresh()
 
 if __name__ == "__main__":
-    stdscr = curses.initscr()
-    curses.noecho()
-    main(stdscr)
-    curses.endwin()
+    wrapper(main)
