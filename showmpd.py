@@ -24,6 +24,6 @@ class mpdwin:
             self.win.addstr(2,2,self.client.currentsong().get('file',0)[0:self.width-3])
             self.client.disconnect()
         except:
-            self.win.addstr(2,2,"Keine Verbindung zum MPD!", curses.color_pair(1));
+            self.win.addstr(2,2,"Something went wrong!", curses.color_pair(1));
         self.win.refresh()
 

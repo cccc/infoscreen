@@ -71,17 +71,17 @@ class trafficwin:
                     bhfc = bhfc+1
                 else:
                     break
-                self.win.addstr(2+s,2,line['number']+'\t'+line['direction'])
+                self.win.addstr(2+s,2,(line['number']+'\t'+line['direction'])[0:self.width-21])
                 deptime = datetime.strptime("2017 "+get_time(dep), '%Y %H:%M').timestamp()
                 depmin = abs(deptime-utime)/60
-                self.win.addstr(2+s,50,("%d Min." % depmin if depmin > 1 else "Sofort"))
+                self.win.addstr(2+s,self.width-20,("%d Min." % depmin if depmin > 1 else "Sofort"))
                 if ('estimate' in dep and 'timetable' in dep):
                     delaytime = deptime - datetime.strptime("2017 "+dep['timetable'], '%Y %H:%M').timestamp()
                     delaytime = abs(delaytime)/60
                     if (delaytime > 1):
-                        self.win.addstr(2+s,60,"(+%d Min)" % delaytime,curses.color_pair(1))
+                        self.win.addstr(2+s,self.width-10,"(+%d Min)" % delaytime,curses.color_pair(1))
                     else:
-                        self.win.addstr(2+s,60,"(+0 Min)",curses.color_pair(2))
+                        self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2))
 
         except:
             req = httpc.Request(
