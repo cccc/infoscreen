@@ -45,6 +45,9 @@ class trafficwin:
     def show(self):
         self.win.erase()
         rectangle(self.win,1,0,self.height-2,self.width-1)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(4, curses.COLOR_RED, curses.COLOR_BLUE)
+        curses.init_pair(5, curses.COLOR_GREEN, curses.COLOR_BLUE)
 
         try:
             ubtable = get_json(vrsuburl)
@@ -58,7 +61,7 @@ class trafficwin:
             bhftable = bhftable['events']
             ubc = 0
             bhfc = 0
-            for s in range(0,10):
+            for s in range(0,self.height-4):
                 if (ubc < len(ubtable) and get_time(ubtable[ubc]['departure']) < get_time(bhftable[bhfc]['departure'])):
                     dep = ubtable[ubc]['departure']
                     line = ubtable[ubc]['line']
@@ -71,17 +74,18 @@ class trafficwin:
                     bhfc = bhfc+1
                 else:
                     break
-                self.win.addstr(2+s,2,(line['number']+'\t'+line['direction'])[0:self.width-21])
+                self.win.addstr(2+s,2,' '*(self.width-3), curses.color_pair(0 if (s%2)==0 else 3))
+                self.win.addstr(2+s,2,(line['number']+'\t'+line['direction'])[0:self.width-21], curses.color_pair(0 if (s%2)==0 else 3))
                 deptime = datetime.strptime("2017 "+get_time(dep), '%Y %H:%M').timestamp()
                 depmin = abs(deptime-utime)/60
-                self.win.addstr(2+s,self.width-20,("%d Min." % depmin if depmin > 1 else "Sofort"))
+                self.win.addstr(2+s,self.width-20,("%d Min." % depmin if depmin > 1 else "Sofort"),curses.color_pair(0 if (s%2)==0 else 3))
                 if ('estimate' in dep and 'timetable' in dep):
                     delaytime = deptime - datetime.strptime("2017 "+dep['timetable'], '%Y %H:%M').timestamp()
                     delaytime = abs(delaytime)/60
                     if (delaytime > 1):
-                        self.win.addstr(2+s,self.width-10,"(+%d Min)" % delaytime,curses.color_pair(1))
+                        self.win.addstr(2+s,self.width-10,"(+%d Min)" % delaytime,curses.color_pair(1 if (s%2)==0 else 4))
                     else:
-                        self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2))
+                        self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2 if (s%2)==0 else 5))
 
         except:
             req = httpc.Request(
