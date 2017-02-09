@@ -96,9 +96,12 @@ class trafficwin:
                 self.win.addstr(2+s,2,(line['number']+'\t'+line['direction'])[0:self.width-21], curses.color_pair(0 if (s%2)==0 else 3))
                 self.win.addstr(2+s,self.width-20,("%d Min." % depmin if depmin >= 1 else "Sofort"),curses.color_pair(0 if (s%2)==0 else 3))
                 if ('estimate' in dep and 'timetable' in dep):
-                    delaytime = deptime - time_to_sec(dep['timetable'])
+                    if (deptime < time_to_sec(dep['timetable'])):
+                        delaytime = deptime + ((24*3600)-time_to_sec(dep['timetable']))
+                    else:
+                        delaytime = deptime - time_to_sec(dep['timetable'])
                     delaytime = abs(delaytime)/60
-                    if (delaytime > 1):
+                    if (delaytime > 1 and dep['delayed']):
                         self.win.addstr(2+s,self.width-10,"(+%d Min)" % delaytime,curses.color_pair(1 if (s%2)==0 else 4))
                     else:
                         self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2 if (s%2)==0 else 5))
