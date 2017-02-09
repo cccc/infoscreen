@@ -33,7 +33,7 @@ def get_time(dep):
     return (dep['estimate'] if 'estimate' in dep else dep['timetable'])
 
 def time_to_sec(t):
-    return (int)(t[0:2])*3600 + (int)(t[3:5])*60 + ((int)(t[6:8]) if len(t) >= 8 else 0)
+    return (int)(t[0:2])*3600 + (int)(t[3:5])*60 #+ ((int)(t[6:8]) if len(t) >= 8 else 0)
 
 
 class trafficwin:
@@ -56,8 +56,8 @@ class trafficwin:
             bhftable = get_json(vrsbhfurl)
             ubtimestr = ubtable['updated']
             bhftimestr = bhftable['updated']
-            ubtime = time_to_sec(ubtimestr[7:15])
-            bhftime = time_to_sec(bhftimestr[7:15])
+            ubtime = time_to_sec(ubtimestr[7:16])
+            bhftime = time_to_sec(bhftimestr[7:16])
             self.win.addstr(0,0, "Departures "+ubtable['updated'])
             ubtable = ubtable['events']
             bhftable = bhftable['events']
@@ -66,13 +66,13 @@ class trafficwin:
             for s in range(0,self.height-4):
                 if (ubc < len(ubtable)):
                     ubdeptime = time_to_sec(get_time(ubtable[ubc]['departure']))
-                    if (ubdeptime < ubtime):
+                    if (ubdeptime < ubtime and ubtime > 3600):
                         ubdepmin = abs(((24*3600)-ubtime)+ubdeptime)/60
                     else:
                         ubdepmin = abs(ubdeptime-ubtime)/60
                 if (bhfc < len(bhftable)):
                     bhfdeptime = time_to_sec(get_time(bhftable[bhfc]['departure'])) 
-                    if (bhfdeptime < bhftime):
+                    if (bhfdeptime < bhftime and bhftime > 3600):
                         bhfdepmin = abs(((24*3600)-bhftime)+bhfdeptime)/60
                     else:
                         bhfdepmin = abs(bhfdeptime-bhftime)/60
