@@ -72,6 +72,7 @@ def main(stdscr):
     mpdw = showmpd.mpdwin(1,6,76,5,"localhost")
     trafficw = showtraffic.trafficwin(1,11,76,14)
 
+    curses.curs_set(False)
     statuswin = curses.newwin(1,20,2,25)
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
