@@ -68,6 +68,7 @@ def main(stdscr):
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
     i = 0
     while True:
+        stdscr.clear()
         timew.show()
         mpdw.show()
         statuswin.erase()
