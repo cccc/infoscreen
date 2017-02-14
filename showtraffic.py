@@ -28,7 +28,9 @@ class trafficwin:
                 if (s > self.height-5):
                     break
                 self.win.addstr(2+s,2,' '*(self.width-3), curses.color_pair(0 if (s%2)==0 else 3))
-                self.win.addstr(2+s,2,(nextdep['line']+'\t'+nextdep['direction'])[0:self.width-21], curses.color_pair(0 if (s%2)==0 else 3))
+                if ('timetable' in nextdep):
+                    self.win.addstr(2+s, 2, nextdep['timetable'],curses.color_pair(0 if (s%2)==0 else 3))
+                self.win.addstr(2+s,10,(nextdep['line']+'\t'+nextdep['direction'])[0:self.width-31], curses.color_pair(0 if (s%2)==0 else 3))
                 self.win.addstr(2+s,self.width-20,("%d Min." % nextdep['reldeparture'] if nextdep['reldeparture'] >= 1 else "Sofort"),curses.color_pair(0 if (s%2)==0 else 3))
                 if ('delay' in nextdep):
                     if (nextdep['delay'] > 1):
