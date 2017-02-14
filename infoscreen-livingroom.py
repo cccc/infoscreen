@@ -30,7 +30,7 @@ def main(stdscr):
     blank = False
     isOn = dict()
     isOn['tuer'] = False
-    trafficw = showtraffic.trafficwin(1,11,76,20)
+    trafficw = showtraffic.trafficwin(1,11,76,23)
     
     def on_message(client, userdata, message):
         global isopen
