@@ -27,18 +27,25 @@ def main(stdscr):
     global aussenAn
     global innenAn
     global vorneAn
+    global trafficw
     isopen = False
     aussenAn = False
     innenAn = False
     vorneAn = False
     blank = False
     
+    trafficw = showtraffic.trafficwin(1,11,76,14)
+
     def on_message(client, userdata, message):
         global isopen
         global aussenAn
         global innenAn
         global vorneAn
-        if (message.topic == "club/status"):
+        global trafficw
+
+        if (message.topic == "traffic/departures"):
+            trafficw.update(json.loads(message.payload.decode("utf-8")))
+        elif (message.topic == "club/status"):
             if (message.payload[0] != 0):
                 isopen = True
             else:
@@ -64,13 +71,12 @@ def main(stdscr):
     mqttc.loop_start()
 
     mqttc.on_message = on_message
-    mqttc.subscribe([("club/status",2),("licht/keller/aussen",2),("licht/keller/innen",2),("licht/keller/vorne",2)])
+    mqttc.subscribe([("traffic/departures",2),("club/status",2),("licht/keller/aussen",2),("licht/keller/innen",2),("licht/keller/vorne",2)])
 
     mclient = MPDClient()
     
     timew = showtimestamp.timewin(1,1,13,5)
     mpdw = showmpd.mpdwin(1,6,76,5,"localhost")
-    trafficw = showtraffic.trafficwin(1,11,76,14)
 
     curses.curs_set(False)
     statuswin = curses.newwin(1,20,2,25)
@@ -85,11 +91,7 @@ def main(stdscr):
             statuswin.addstr(0,0, "Club is open!", curses.color_pair(2))
         else:
             statuswin.addstr(0,0, "Club is closed!", curses.color_pair(1))
-        if (i == 50):
-            i = 0
-            trafficw.show()
-        else:
-            i += 1
+        trafficw.show()
         statuswin.refresh()
         time.sleep(0.1)
         if (not vorneAn and not aussenAn and not innenAn and not blank):
