@@ -29,11 +29,16 @@ def main(stdscr):
     blank = False
     isOn = dict()
     isOn['tuer'] = False
+    trafficw = showtraffic.trafficwin(1,11,76,20)
+    global trafficw
     
     def on_message(client, userdata, message):
         global isopen
         global isOn
-        if (message.topic == "club/status"):
+        global trafficw
+        if (message.topic == "traffic/departures"):
+            trafficw.update(json.loads(message.payload))
+        elif (message.topic == "club/status"):
             if (message.payload[0] != 0):
                 isopen = True
             else:
@@ -46,13 +51,12 @@ def main(stdscr):
     mqttc.loop_start()
 
     mqttc.on_message = on_message
-    mqttc.subscribe([("club/status",2),("licht/wohnzimmer/+",2)])
+    mqttc.subscribe([("traffic/departures",2), ("club/status",2),("licht/wohnzimmer/+",2)])
 
     mclient = MPDClient()
     
     timew = showtimestamp.timewin(1,1,13,5)
     mpdw = showmpd.mpdwin(1,6,76,5,'autoc4')
-    trafficw = showtraffic.trafficwin(1,11,76,20)
 
     statuswin = curses.newwin(1,20,2,25)
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
