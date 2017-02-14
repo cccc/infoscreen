@@ -62,6 +62,7 @@ def main(stdscr):
     timew = showtimestamp.timewin(1,1,13,5)
     mpdw = showmpd.mpdwin(1,6,76,5,'autoc4')
 
+    curses.curs_set(False)
     statuswin = curses.newwin(1,20,2,25)
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
