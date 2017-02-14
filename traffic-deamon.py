@@ -78,6 +78,7 @@ class trafficd:
                 nextdep['direction'] = line['direction']
                 nextdep['reldeparture'] = depmin
                 nextdep['departure'] = self.get_time(dep) 
+                nextdep['timetable'] = dep['timetable']
                 if ('estimate' in dep and 'timetable' in dep):
                     timetabletime = self.time_to_sec(dep['timetable'])
                     if (deptime < timetabletime and (timetabletime-deptime) > 12*3600):
