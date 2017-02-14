@@ -24,7 +24,9 @@ class trafficwin:
 
         try:
             self.win.addstr(0,0, "Departures "+dep['srvtime'])
-            for nextdep in dep['departures']:
+            for s, nextdep in enumerate(dep['departures']):
+                if (s > self.height-5):
+                    break
                 self.win.addstr(2+s,2,' '*(self.width-3), curses.color_pair(0 if (s%2)==0 else 3))
                 self.win.addstr(2+s,2,(nextdep['line']+'\t'+nextdep['direction'])[0:self.width-21], curses.color_pair(0 if (s%2)==0 else 3))
                 self.win.addstr(2+s,self.width-20,("%d Min." % nextdep['reldeparture'] if nextdep['reldeparture'] >= 1 else "Sofort"),curses.color_pair(0 if (s%2)==0 else 3))
@@ -37,6 +39,6 @@ class trafficwin:
             self.win.addstr(2,2,"Something went wrong!", curses.color_pair(1))
         self.win.refresh()
 
-    def show()
+    def show(self):
         self.win.refresh()
 

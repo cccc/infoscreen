@@ -25,19 +25,19 @@ import showtraffic
 def main(stdscr):
     global isopen
     global isOn
+    global trafficw
     isopen = False
     blank = False
     isOn = dict()
     isOn['tuer'] = False
     trafficw = showtraffic.trafficwin(1,11,76,20)
-    global trafficw
     
     def on_message(client, userdata, message):
         global isopen
         global isOn
         global trafficw
         if (message.topic == "traffic/departures"):
-            trafficw.update(json.loads(message.payload))
+            trafficw.update(json.loads(message.payload.decode("utf-8")))
         elif (message.topic == "club/status"):
             if (message.payload[0] != 0):
                 isopen = True
@@ -46,6 +46,10 @@ def main(stdscr):
         elif (message.topic == "licht/wohnzimmer/tuer"):
             isOn['tuer'] = (message.payload[0] != 0)
             mqttc=mqtt.Client()
+            
+    os.system("setterm --blank poke")
+    os.system("setterm --blank 0")
+
     mqttc=mqtt.Client()
     mqttc.connect("172.23.23.110",1883,60)
     mqttc.loop_start()
@@ -70,21 +74,17 @@ def main(stdscr):
             statuswin.addstr(0,0, "Club is open!", curses.color_pair(2))
         else:
             statuswin.addstr(0,0, "Club is closed!", curses.color_pair(1))
-        if (i == 50):
-            i = 0
-            trafficw.show()
-        else:
-            i += 1
+        trafficw.show()
         statuswin.refresh()
         time.sleep(0.1)
-        if (not isOn['tuer'] and not blank):
-            blank = True
-            os.system("setterm --blank force --powersave on")
-            #os.system("setterm --powersave powerdown")
-        elif ((isOn['tuer']) and blank):
-            blank = False
-            os.system("setterm --blank poke")
-            os.system("setterm --blank 0")
-
+#        if (not isOn['tuer'] and not blank):
+#            blank = True
+#            os.system("setterm --blank force --powersave on")
+#            #os.system("setterm --powersave powerdown")
+#        elif ((isOn['tuer']) and blank):
+#            blank = False
+#            os.system("setterm --blank poke")
+#            os.system("setterm --blank 0")
+#
 if __name__ == "__main__":
     wrapper(main)
