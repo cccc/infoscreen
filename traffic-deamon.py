@@ -106,7 +106,7 @@ class trafficd:
             result['srvtime'] = lines[0][0]
             lines = lines[1:len(lines)]
             for s,(line,destination,departure) in enumerate(lines):
-                nextdep = {'line': line, 'direction': destination, 'departure': departure}
+                nextdep = {'line': line, 'direction': destination, 'reldeparture': departure}
                 result['departures'].append(nextdep)
         return result
 
