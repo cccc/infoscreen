@@ -82,9 +82,9 @@ class trafficd:
                 if ('estimate' in dep and 'timetable' in dep):
                     timetabletime = self.time_to_sec(dep['timetable'])
                     if (deptime < timetabletime and (timetabletime-deptime) > 12*3600):
-                        delaytime = deptime + ((24*3600)-self.get_departurestime_to_sec(dep['timetable']))
+                        delaytime = deptime + ((24*3600)-timetabletime)
                     else:
-                        delaytime = deptime - self.time_to_sec(dep['timetable'])
+                        delaytime = deptime - timetabletime
                     delaytime = abs(delaytime)/60
                     nextdep['delay'] = delaytime
                 result['departures'].append(nextdep)
