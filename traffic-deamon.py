@@ -85,7 +85,7 @@ class trafficd:
                         delaytime = deptime + ((24*3600)-timetabletime)
                     else:
                         delaytime = deptime - timetabletime
-                    delaytime = abs(delaytime)/60
+                    delaytime = delaytime/60
                     nextdep['delay'] = delaytime
                 result['departures'].append(nextdep)
         except:
