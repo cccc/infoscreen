@@ -35,6 +35,8 @@ class trafficwin:
                 if ('delay' in nextdep):
                     if (nextdep['delay'] > 1):
                         self.win.addstr(2+s,self.width-10,"(+%d Min)" % nextdep['delay'],curses.color_pair(1 if (s%2)==0 else 4))
+                    elif (nextdep['delay'] < 1):
+                        self.win.addstr(2+s,self.width-10,"(%d Min)" % nextdep['delay'],curses.color_pair(0 if (s%2)==0 else 3))
                     else:
                         self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2 if (s%2)==0 else 5))
         except:
