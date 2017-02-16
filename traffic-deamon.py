@@ -51,15 +51,15 @@ class trafficd:
                 if (ubc < len(ubtable)):
                     ubdeptime = self.time_to_sec(self.get_time(ubtable[ubc]['departure']))
                     if (ubdeptime < srvtime and (srvtime-ubdeptime) > 12*3600):
-                        ubdepmin = abs(((24*3600)-srvtime)+ubdeptime)/60
+                        ubdepmin = (((24*3600)-srvtime)+ubdeptime)/60
                     else:
                         ubdepmin = abs(ubdeptime-srvtime)/60
                 if (bhfc < len(bhftable)):
                     bhfdeptime = self.time_to_sec(self.get_time(bhftable[bhfc]['departure'])) 
                     if (bhfdeptime < srvtime and (srvtime-bhfdeptime) > 12*3600):
-                        bhfdepmin = abs(((24*3600)-srvtime)+bhfdeptime)/60
+                        bhfdepmin = (((24*3600)-srvtime)+bhfdeptime)/60
                     else:
-                        bhfdepmin = abs(bhfdeptime-srvtime)/60
+                        bhfdepmin = (bhfdeptime-srvtime)/60
                 if (ubc < len(ubtable) and (bhfc >= len(bhftable) or ubdepmin < bhfdepmin)):
                     depmin = ubdepmin
                     deptime = ubdeptime
