@@ -28,6 +28,7 @@ def main(stdscr):
     global innenAn
     global vorneAn
     global trafficw
+    global mpdw
     isopen = False
     aussenAn = False
     innenAn = False
@@ -45,6 +46,10 @@ def main(stdscr):
 
         if (message.topic == "traffic/departures"):
             trafficw.update(json.loads(message.payload.decode("utf-8")))
+        elif (message.topic == "mpd/keller/state"):
+            mpdw.update_state(message.payload.decode("utf-8"))
+        elif (message.topic == "mpd/keller/song"):
+            mpdw.update_song(message.payload.decode("utf-8"))
         elif (message.topic == "club/status"):
             if (message.payload[0] != 0):
                 isopen = True
@@ -71,12 +76,12 @@ def main(stdscr):
     mqttc.loop_start()
 
     mqttc.on_message = on_message
-    mqttc.subscribe([("traffic/departures",2),("club/status",2),("licht/keller/aussen",2),("licht/keller/innen",2),("licht/keller/vorne",2)])
+    mqttc.subscribe([("traffic/departures",2),("club/status",2),("licht/keller/aussen",2),("licht/keller/innen",2),("licht/keller/vorne",2),("mpd/keller/+",2)])
 
     mclient = MPDClient()
     
     timew = showtimestamp.timewin(1,1,13,5)
-    mpdw = showmpd.mpdwin(1,6,76,5,"localhost")
+    mpdw = showmpd.mpdwin(1,6,76,5)
 
     curses.curs_set(False)
     statuswin = curses.newwin(1,20,2,25)
