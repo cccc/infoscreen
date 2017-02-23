@@ -23,7 +23,10 @@ class trafficwin:
         curses.init_pair(5, curses.COLOR_GREEN, curses.COLOR_BLUE)
 
         try:
-            self.win.addstr(0,0, "Departures "+dep['srvtime'])
+            delays = sum(map(lambda x: x["delay"] if "delay" in x and x["delay"] > 0 else 0, dep["departures"]))
+            self.win.addstr(0,0,
+                            "".join(("Departures ", dep['srvtime'],
+                                     " | Total Delay: %d Min." % (delays) if delays > 0 else "")))
             for s, nextdep in enumerate(dep['departures']):
                 if (s > self.height-5):
                     break
@@ -39,8 +42,8 @@ class trafficwin:
                         self.win.addstr(2+s,self.width-10,"(%d Min)" % nextdep['delay'],curses.color_pair(0 if (s%2)==0 else 3))
                     else:
                         self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2 if (s%2)==0 else 5))
-        except:
-            self.win.addstr(2,2,"Something went wrong!", curses.color_pair(1))
+        except Exception as msg:
+            self.win.addstr(2,2,"Something went wrong! " + msg, curses.color_pair(1))
 
     def show(self):
         self.win.refresh()
