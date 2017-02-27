@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from musicpd import (MPDClient, CommandError)
 import curses
 from curses.textpad import Textbox, rectangle
 from datetime import datetime

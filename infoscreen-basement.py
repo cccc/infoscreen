@@ -4,12 +4,7 @@ import time
 
 import os
 
-import urllib.request as httpc
-from bs4 import BeautifulSoup
-
 import json
-
-from musicpd import (MPDClient, CommandError)
 
 import paho.mqtt.client as mqtt
 
@@ -78,8 +73,6 @@ def main(stdscr):
     mqttc.on_message = on_message
     mqttc.subscribe([("traffic/departures",2),("club/status",2),("licht/keller/aussen",2),("licht/keller/innen",2),("licht/keller/vorne",2),("mpd/keller/+",2)])
 
-    mclient = MPDClient()
-    
     timew = showtimestamp.timewin(1,1,13,5)
     mpdw = showmpd.mpdwin(1,6,76,5)
 
