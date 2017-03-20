@@ -19,6 +19,7 @@ from curses import wrapper
 import showtimestamp
 import showmpd
 import showtraffic
+import showtemp
 
 def main(stdscr):
     global isopen
@@ -60,17 +61,19 @@ def main(stdscr):
     mqttc.on_message = on_message
     mqttc.subscribe([("traffic/departures",2), ("club/status",2),("licht/wohnzimmer/+",2),("mpd/baellebad/+",2)])
 
+    tempw = showtemp.tempwin(20, 1, 14, 5, "28-000008a0fd0b")
     timew = showtimestamp.timewin(1,1,13,5)
     mpdw = showmpd.mpdwin(1,6,76,5)
 
     curses.curs_set(False)
-    statuswin = curses.newwin(1,20,2,25)
+    statuswin = curses.newwin(1,20,2,40)
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
     i = 0
     while True:
         stdscr.clear()
         timew.show()
+        tempw.show()
         mpdw.show()
         statuswin.erase()
         if (isopen):
