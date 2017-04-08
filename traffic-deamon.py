@@ -111,7 +111,7 @@ class trafficd:
         return result
 
 if __name__ == "__main__":
-    mqttc=mqtt.Client()
+    mqttc=mqtt.Client("trafficker")
     mqttc.connect("172.23.23.110",1883,60)
     mqttc.loop_start()
     trfc = trafficd( "https://www.vrsinfo.de/index.php?eID=tx_vrsinfo_ass2_departuremonitor&i=LEbuNjirOBzyGfCXaM9GxZQ47Dq8S4ET",

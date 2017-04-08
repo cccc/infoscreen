@@ -54,7 +54,7 @@ def main(stdscr):
     os.system("setterm --blank poke")
     os.system("setterm --blank 0")
 
-    mqttc=mqtt.Client()
+    mqttc=mqtt.Client("infoscreen/livingroom")
     mqttc.connect("172.23.23.110",1883,60)
     mqttc.loop_start()
 

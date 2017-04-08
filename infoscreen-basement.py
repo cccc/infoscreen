@@ -66,7 +66,7 @@ def main(stdscr):
             else:
                 innenAn = False
 
-    mqttc=mqtt.Client()
+    mqttc=mqtt.Client("infoscreen/basement")
     mqttc.connect("172.23.23.110",1883,60)
     mqttc.loop_start()
 
