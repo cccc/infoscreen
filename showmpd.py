@@ -18,6 +18,7 @@ class mpdwin:
     def update_state(self, state):
         self.state = state
         self.update()
+
     def update_song(self, song):
         self.song = song
         self.update()
