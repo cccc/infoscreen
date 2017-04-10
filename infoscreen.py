@@ -49,12 +49,13 @@ class Infoscreen():
 
             self.mqttc.subscribe([
                     ("traffic/departures",             2),
+                    ("heartbeat/#",                    2),
                     ("club/status",                    2),
                     ("licht/wohnzimmer/+",             2),
                     ("mpd/{}/+".format(self.mpd_name), 2)
                 ])
 
-            self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), retain=True)
+            self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
     
     def on_message(self, client, userdata, message):
 
@@ -70,6 +71,9 @@ class Infoscreen():
         elif (message.topic == "club/status"):
             self.statusw.update(message.payload)
 
+        elif (message.topic.startswith("heartbeat/")):
+            self.hbw.update(message.topic, message.payload)
+
         # elif (message.topic == "licht/wohnzimmer/tuer"):
         #     self.is_on['tuer'] = (message.payload[0] != 0)
 
@@ -82,6 +86,7 @@ class Infoscreen():
             self.mpdw.show()
             self.trafficw.show()
             self.statusw.show()
+            self.hbw.show()
             time.sleep(0.1)
 
 #        if (not isOn['tuer'] and not blank):

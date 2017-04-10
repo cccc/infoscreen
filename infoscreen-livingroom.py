@@ -8,6 +8,7 @@ import showmpd
 import showtraffic
 import showtemp
 import showstatus
+import showheartbeat
 
 from infoscreen import Infoscreen
 
@@ -23,6 +24,7 @@ class Livingroom(Infoscreen):
         self.tempw = showtemp.tempwin(20, 1, 14, 5, "28-000008a0fd0b")
         self.timew = showtimestamp.timewin(1,1,13,5)
         self.mpdw = showmpd.mpdwin(1,6,76,5)
+        self.hbw = showheartbeat.heartbeatwin(79,11,28,23)
 
 
 def main(stdscr):
