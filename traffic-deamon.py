@@ -6,6 +6,7 @@ import urllib.request as httpc
 from bs4 import BeautifulSoup
 
 import json
+import sys
 
 import paho.mqtt.client as mqtt
 
@@ -112,6 +113,16 @@ class trafficd:
 
 if __name__ == "__main__":
     mqttc=mqtt.Client("trafficker")
+
+    def on_connect(a, b, rc):
+        if rc != 0:
+            sys.exit(1)
+        else:
+            mqttc.publish('heartbeat/trafficker', bytearray(b'\x01'), retain=True)
+
+    mqttc.on_connect = on_connect
+    mqttc.will_set('heartbeat/trafficker', bytearray(b'\x00'), 2, True)
+
     mqttc.connect("172.23.23.110",1883,60)
     mqttc.loop_start()
     trfc = trafficd( "https://www.vrsinfo.de/index.php?eID=tx_vrsinfo_ass2_departuremonitor&i=LEbuNjirOBzyGfCXaM9GxZQ47Dq8S4ET",
