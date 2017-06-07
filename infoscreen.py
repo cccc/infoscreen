@@ -52,7 +52,8 @@ class Infoscreen():
                     ("heartbeat/#",                    2),
                     ("club/status",                    2),
                     ("licht/wohnzimmer/+",             2),
-                    ("mpd/{}/+".format(self.mpd_name), 2)
+                    ("skynet",                         2),
+                    ("mpd/{}/+".format(self.mpd_name), 2),
                 ])
 
             self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
@@ -61,6 +62,9 @@ class Infoscreen():
 
         if (message.topic == "traffic/departures"):
             self.trafficw.update(json.loads(message.payload.decode("utf-8")))
+
+        elif (message.topic == "skynet"):
+            self.skyw.update(json.loads(message.payload.decode("utf-8")))
 
         elif (message.topic == "mpd/{}/state".format(self.mpd_name)):
             self.mpdw.update_state(message.payload.decode("utf-8"))
@@ -87,6 +91,7 @@ class Infoscreen():
             self.trafficw.show()
             self.statusw.show()
             self.hbw.show()
+            self.skyw.show()
             time.sleep(0.1)
 
 #        if (not isOn['tuer'] and not blank):
