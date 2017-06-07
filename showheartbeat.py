@@ -12,7 +12,11 @@ class heartbeatwin:
         self.heartbeats = {}
 
     def update(self, topic, payload):
-        self.heartbeats[topic[len('heartbeat/'):]] = payload[0]
+        if len(payload) == 0:
+            self.heartbeats.pop(topic[len('heartbeat/'):])
+
+        else:
+            self.heartbeats[topic[len('heartbeat/'):]] = payload[0]
 
         self.win.erase()
         rectangle(self.win,1,0,self.height-2,self.width-1)
