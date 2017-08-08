@@ -34,7 +34,10 @@ class trafficwin:
                 if ('timetable' in nextdep):
                     self.win.addstr(2+s, 2, nextdep['timetable'],curses.color_pair(0 if (s%2)==0 else 3))
                 self.win.addstr(2+s,10,(nextdep['line']+'\t'+nextdep['direction'])[0:self.width-31], curses.color_pair(0 if (s%2)==0 else 3))
-                self.win.addstr(2+s,self.width-20,("%d Min." % nextdep['reldeparture'] if nextdep['reldeparture'] >= 1 else "Sofort"),curses.color_pair(0 if (s%2)==0 else 3))
+                if (type(nextdep['reldeparture']) == int or type(nextdep['reldeparture']) == float):
+                    self.win.addstr(2+s,self.width-20,("%d Min." % nextdep['reldeparture'] if nextdep['reldeparture'] >= 1 else "Sofort"),curses.color_pair(0 if (s%2)==0 else 3))
+                else:
+                    self.win.addstr(2+s,self.width-20,str(nextdep['reldeparture']),curses.color_pair(0 if (s%2)==0 else 3))
                 if ('delay' in nextdep):
                     if (nextdep['delay'] > 1):
                         self.win.addstr(2+s,self.width-10,"(+%d Min)" % nextdep['delay'],curses.color_pair(1 if (s%2)==0 else 4))
