@@ -15,6 +15,9 @@ class trafficd:
        self.vrsurla = vrsurla
        self.vrsurlb = vrsurlb
        self.kvburl = kvburl
+       self.cache = {}
+       self.cache['vrsa'] = {}
+       self.cache['vrsb'] = {}
 
     def get_json(self, url):
         req = httpc.Request(
@@ -41,7 +44,19 @@ class trafficd:
         try:
             ubtable = self.get_json(self.vrsurla)
             bhftable = self.get_json(self.vrsurlb)
-            result['srvtime'] = bhftable['updated']
+
+            if (not 'events' in ubtable or len(ubtable['events']) == 0):
+                ubtable = self.cache['vrsa']
+            else:
+                self.cache['vrsa'] = ubtable
+
+            if (not 'events' in bhftable or len(bhftable['events']) == 0):
+                bhftable = self.cache['vrsb']
+                result['srvtime'] = ubtable['updated']
+            else:
+                self.cache['vrsb'] = bhftable
+                result['srvtime'] = bhftable['updated']
+
             srvtime = self.time_to_sec(result['srvtime'][7:16])
             ubtable = ubtable['events']
             bhftable = bhftable['events']
