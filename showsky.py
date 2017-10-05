@@ -22,7 +22,7 @@ class skywin:
         if entry['type'] == 'iss':
             return 'ISS   {brightness_float: 1.1f}  {ptime}'.format(**entry)
         else:
-            return 'Ir{satellite_num}  {brightness_float: 1.1f}  {ptime}'.format(**entry)
+            return 'Ir{satellite_num: <2}  {brightness_float: 1.1f}  {ptime}'.format(**entry)
 
     def update(self, sky_data):
         self.win.erase()
