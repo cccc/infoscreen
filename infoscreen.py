@@ -54,6 +54,7 @@ class Infoscreen():
                     ("licht/wohnzimmer/+",             2),
                     ("skynet",                         2),
                     ("mpd/{}/+".format(self.mpd_name), 2),
+                    ("socket/wohnzimmer/+/+",            2),
                 ])
 
             self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
@@ -77,6 +78,9 @@ class Infoscreen():
 
         elif (message.topic.startswith("heartbeat/")):
             self.hbw.update(message.topic, message.payload)
+
+        elif (message.topic.startswith("socket/wohnzimmer/screen/")):
+            self.socket.update(message.topic,message.payload)
 
         # elif (message.topic == "licht/wohnzimmer/tuer"):
         #     self.is_on['tuer'] = (message.payload[0] != 0)
