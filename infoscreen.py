@@ -3,6 +3,7 @@
 import json
 import time
 import sys
+from threading import Lock
 import paho.mqtt.client as mqtt
 
 
@@ -19,6 +20,7 @@ class Infoscreen():
         # self.is_on = { 'tuer' : False }
         self.blank = False
         self.stdscr = stdscr
+        self.lock = Lock()
 
         self._init_mqtt(clientid)
         self._init_windows()
@@ -61,6 +63,8 @@ class Infoscreen():
     
     def on_message(self, client, userdata, message):
 
+        self.lock.acquire()
+
         if (message.topic == "traffic/departures"):
             self.trafficw.update(json.loads(message.payload.decode("utf-8")))
 
@@ -82,12 +86,15 @@ class Infoscreen():
         elif (message.topic.startswith("socket/wohnzimmer/screen/")):
             self.socket.update(message.topic,message.payload)
 
+        self.lock.release()
+
         # elif (message.topic == "licht/wohnzimmer/tuer"):
         #     self.is_on['tuer'] = (message.payload[0] != 0)
 
     def run(self):
 
         while True:
+            self.lock.acquire()
             self.stdscr.clear()
             self.timew.show()
             self.tempw.show()
@@ -96,6 +103,7 @@ class Infoscreen():
             self.statusw.show()
             self.hbw.show()
             self.skyw.show()
+            self.lock.release()
             time.sleep(0.1)
 
 #        if (not isOn['tuer'] and not blank):

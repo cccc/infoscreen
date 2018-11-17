@@ -53,7 +53,7 @@ class trafficwin:
                         else:
                             self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2 if (s%2)==0 else 5))
                 self.win.refresh()
-                time.sleep(0.05)
+                time.sleep(0.025)
         except Exception as msg:
             self.win.addstr(2,2,"Something went wrong! " + str(msg), curses.color_pair(1))
 
