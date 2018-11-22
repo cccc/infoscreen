@@ -15,12 +15,8 @@ class trafficwin:
         self.xpos = xpos
         self.ypos = ypos
         self.win.erase()
-        rectangle(self.win,1,0,self.height-2,self.width-1)
-
 
     def update(self, dep):
-        #self.win.erase()
-        #rectangle(self.win,1,0,self.height-2,self.width-1)
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLUE)
         curses.init_pair(4, curses.COLOR_RED, curses.COLOR_BLUE)
         curses.init_pair(5, curses.COLOR_GREEN, curses.COLOR_BLUE)
@@ -31,7 +27,6 @@ class trafficwin:
             self.win.addstr(0,0,
                             "".join(("Departures ", dep['srvtime'],
                                      " | Total Delay: %d Min." % (delays) if delays > 0 else "")))
-            #for s, nextdep in enumerate(dep['departures']):
             for s in range(0, self.height-4):
                 #if (s > self.height-5):
                 #    break
@@ -58,5 +53,6 @@ class trafficwin:
             self.win.addstr(2,2,"Something went wrong! " + str(msg), curses.color_pair(1))
 
     def show(self):
+        rectangle(self.win,1,0,self.height-2,self.width-1)
         self.win.refresh()
 
