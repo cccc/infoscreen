@@ -77,7 +77,7 @@ class trafficwin:
         try:
             #delays = sum(map(lambda x: x["delay"] if "delay" in x and x["delay"] > 0 else 0, dep["departures"]))
             delays = 0
-            self.win.addstr(0,0,F"Departures {dep['srvtime']} ")
+            self.win.addstr(0,0,"Departures %s" % dep['srvtime'])
             #" | Total Delay: %d Min." % (delays) if delays > 0 else ""
             
             self.table.apply_data(dep["departures"])

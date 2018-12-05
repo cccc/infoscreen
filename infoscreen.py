@@ -91,7 +91,7 @@ class Infoscreen():
                             try:
                                 payload = json.loads(message.payload.decode("utf-8"))
                             except Exception as msg:
-                                print(F"An error occured while parsing JSON for topic \"{message.topic}\" : {str(msg)}")
+                                print("An error occured while parsing JSON for topic \"%s\" : {str(msg)}" % message.topic)
                         elif listener["utf8"]:
                             payload = message.payload.decode("utf-8")
                         listener["callback"](payload)

@@ -35,7 +35,7 @@ class bikeswin:
         curses.init_pair(6, curses.COLOR_WHITE, curses.COLOR_RED)
         
         try:
-            self.win.addstr(0,0,F"Bikes {data['time']}")
+            self.win.addstr(0,0,"Bikes %s" % data['time'])
             
             bikes = data["bikes"]
             bikes.sort(key=lambda bike: bike["distance"])
