@@ -109,7 +109,7 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
-    info_screen = Livingroom("infoscreen/livingroom-dev", stdscr)
+    info_screen = Livingroom("infoscreen/livingroom", stdscr)
     info_screen.run()
 
 if __name__ == "__main__":
