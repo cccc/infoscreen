@@ -14,11 +14,11 @@ class bikeswin:
         self.ypos = ypos
         self.table = Table(self.win,1,2,width-2,height-3,[{
                 "text": lambda col,row,bike,data: ("#%s" % bike["bike_number"]) if "bike_number" in bike else "",
-                "attributes":[curses.color_pair(0),curses.color_pair(6)],
+                "attributes":[curses.color_pair(0),curses.color_pair(3)],
                 "width": 8
             },{
                 "text": lambda col,row,bike,data: str(bike["address"] or "") if "address" in bike else "",
-                "attributes":[curses.color_pair(0),curses.color_pair(6)],
+                "attributes":[curses.color_pair(0),curses.color_pair(3)],
                 "width":width-2-8-5
             },{
                 "text": lambda col,row,bike,data: ("%dm" % bike["distance"]) if "distance" in bike else "",

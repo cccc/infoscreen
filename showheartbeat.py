@@ -17,7 +17,7 @@ class heartbeatwin:
             self.height-3,
             [
                 {
-                    "width": self.width-2,
+                    "width": self.width-3,
                     "text": lambda col, row, item, data: item[0],
                     "attributes": lambda col, row, item, data: curses.color_pair(2) if item[1] else curses.color_pair(1)
                 }
