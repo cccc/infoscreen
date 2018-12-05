@@ -1,6 +1,6 @@
 import curses
-from curses.textpad import rectangle
 from datetime import datetime
+from widgets import Table, rectangle
 
 class skywin:
     def __init__(self, xpos, ypos, width, height):
@@ -9,28 +9,35 @@ class skywin:
         self.width = width
         self.xpos = xpos
         self.ypos = ypos
-
-    def entry_to_str(self, entry):
-        #entry['ptime'] = datetime.fromtimestamp(entry['timestamp']).strftime('%b %d, %H:%M:%S')
-        #if entry['type'] == 'iss':
-        #    return 'ISS   {brightness_float: 1.1f}  {altitude_deg:2}°    -   {ptime}'.format(**entry)
-        #else:
-        #    return 'Ir{satellite_num}  {brightness_float: 1.1f}  {altitude_deg:2}°  {azimuth_deg:3}°  {ptime}'.format(**entry)
-
-        entry['ptime'] = datetime.fromtimestamp(entry['timestamp']).strftime('%a %H:%M:%S')
-
-        if entry['type'] == 'iss':
-            return 'ISS   {brightness_float: 1.1f}  {ptime}'.format(**entry)
-        else:
-            return 'Ir{satellite_num: <2}  {brightness_float: 1.1f}  {ptime}'.format(**entry)
+        self.table = Table(
+            self.win,
+            1,
+            2,
+            self.width-2,
+            self.height-3,
+            [
+                { #TYPE
+                    "width": 6,
+                    "text": lambda col, row, entry, data: "ISS" if entry['type'] == "iss" else "Ir%2d" % entry["satellite_num"]
+                },
+                { #BRIGHTNESS
+                    "width": self.width - 2 - 6 - 12,
+                    "text": lambda col, row, entry, data: "%1.1f" % entry["brightness_float"]
+                },
+                { #TIME
+                    "width": 12,
+                    "text": lambda col, row, entry, data: datetime.fromtimestamp(entry['timestamp']).strftime('%a %H:%M:%S')
+                }
+            ])
+        
+        self.win.addstr(0, 0, "Sky Events:")
+        rectangle(self.win,0,1,self.width,self.height-1)
 
     def update(self, sky_data):
-        self.win.erase()
-        rectangle(self.win,1,0,self.height-2,self.width-1)
-
-        self.win.addstr(0, 0, "Sky Events:")
-        for i, entry in enumerate(sky_data[:self.height-4]):
-            self.win.addstr(2+i, 2, self.entry_to_str(entry))
+        try:
+            self.table.apply_data(sky_data)
+        except Exception as msg:
+            self.win.addstr(2, 1, msg)
 
     def show(self):
         self.win.refresh()

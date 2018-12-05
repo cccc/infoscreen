@@ -1,5 +1,5 @@
 import curses
-from curses.textpad import Textbox, rectangle
+from widgets import Table, rectangle
 
 class heartbeatwin:
     def __init__(self, xpos, ypos, width, height):
@@ -8,7 +8,23 @@ class heartbeatwin:
         self.width = width
         self.xpos = xpos
         self.ypos = ypos
-
+        
+        self.table = Table(
+            self.win,
+            1,
+            2,
+            self.width-2,
+            self.height-3,
+            [
+                {
+                    "width": self.width-2,
+                    "text": lambda col, row, item, data: item[0],
+                    "attributes": lambda col, row, item, data: curses.color_pair(2) if item[1] else curses.color_pair(1)
+                }
+            ])
+        
+        self.win.addstr(0, 0, 'Infrastructure:')
+        rectangle(self.win,0,1,self.width,self.height-1)
         self.heartbeats = {}
 
     def update(self, topic, payload):
@@ -17,20 +33,8 @@ class heartbeatwin:
 
         else:
             self.heartbeats[topic[len('heartbeat/'):]] = payload[0]
-
-        self.win.erase()
-        rectangle(self.win,1,0,self.height-2,self.width-1)
-
-        self.win.addstr(0, 0, 'Infrastructure:')
-
-        for i, (s, v) in enumerate(sorted(self.heartbeats.items())[:23]):
-
-            if v != 0:
-                color = curses.color_pair(2)
-            else:
-                color = curses.color_pair(1)
-
-            self.win.addstr(2 + i, 2, s, color)
+        
+        self.table.apply_data( list(sorted(self.heartbeats.items())) )
 
     def show(self):
         self.win.refresh()

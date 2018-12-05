@@ -3,17 +3,15 @@
 import json
 import time
 import sys
+import re
 from threading import Lock
 import paho.mqtt.client as mqtt
 
-
 class Infoscreen():
 
-    mqtt_host = "172.23.23.110"
+    mqtt_host = "autoc4"
     mqtt_port = 1883
     mqtt_keepalive = 60
-
-    mpd_name = None
 
     def __init__(self, clientid, stdscr):
 
@@ -21,6 +19,8 @@ class Infoscreen():
         self.blank = False
         self.stdscr = stdscr
         self.lock = Lock()
+        
+        self.registered_windows = list()
 
         self._init_mqtt(clientid)
         self._init_windows()
@@ -39,7 +39,7 @@ class Infoscreen():
         self.mqttc.loop_start()
 
     def _init_windows(self):
-
+        
         raise NotImplementedError('Abstract method')
 
     def on_connect(self, a, b, c, rc):
@@ -48,43 +48,53 @@ class Infoscreen():
             sys.exit(1) # connect failed # TODO
 
         else:
-
             self.mqttc.subscribe([
-                    ("traffic/departures",             2),
-                    ("heartbeat/#",                    2),
-                    ("club/status",                    2),
-                    ("licht/wohnzimmer/+",             2),
-                    ("skynet",                         2),
-                    ("mpd/{}/+".format(self.mpd_name), 2),
-                    ("socket/wohnzimmer/+/+",            2),
+                    subscription
+                    for registration in self.registered_windows
+                    for listener in registration["listeners"]
+                    for subscription in listener["subscribe"]
                 ])
 
             self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
     
+    def add_window(self, window, listeners):
+        self.registered_windows.append({
+                "window":window,
+                "listeners": [
+                        {
+                            "custom"    : listener["custom"] if "custom" in listener else False,
+                            "listen"    : re.compile(listener["listen"]) if "re" in listener and listener["re"] else listener["listen"],
+                            "subscribe" : listener["subscribe"] if "subscribe" in listener else [],
+                            "re"        : listener["re"] if "re" in listener else False,
+                            "json"      : listener["json"] if "json" in listener else True,
+                            "utf8"      : listener["utf8"] if "utf8" in listener else True,
+                            "callback"  : listener["callback"]
+                        }
+                        
+                        for listener in listeners
+                    ]
+            })
+        
+    
     def on_message(self, client, userdata, message):
 
         self.lock.acquire()
-
-        if (message.topic == "traffic/departures"):
-            self.trafficw.update(json.loads(message.payload.decode("utf-8")))
-
-        elif (message.topic == "skynet"):
-            self.skyw.update(json.loads(message.payload.decode("utf-8")))
-
-        elif (message.topic == "mpd/{}/state".format(self.mpd_name)):
-            self.mpdw.update_state(message.payload.decode("utf-8"))
-
-        elif (message.topic == "mpd/{}/song".format(self.mpd_name)):
-            self.mpdw.update_song(message.payload.decode("utf-8"))
-
-        elif (message.topic == "club/status"):
-            self.statusw.update(message.payload)
-
-        elif (message.topic.startswith("heartbeat/")):
-            self.hbw.update(message.topic, message.payload)
-
-        elif (message.topic.startswith("socket/wohnzimmer/screen/")):
-            self.socket.update(message.topic,message.payload)
+        
+        for registration in self.registered_windows:
+            for listener in registration["listeners"]:
+                if (listener["listen"].search(message.topic) if listener["re"] else listener["listen"] == message.topic):
+                    if listener["custom"]:
+                        listener["callback"](message)
+                    else:
+                        payload = message.payload
+                        if listener["json"]:
+                            try:
+                                payload = json.loads(message.payload.decode("utf-8"))
+                            except Exception as msg:
+                                print(F"An error occured while parsing JSON for topic \"{message.topic}\" : {str(msg)}")
+                        elif listener["utf8"]:
+                            payload = message.payload.decode("utf-8")
+                        listener["callback"](payload)
 
         self.lock.release()
 
@@ -94,17 +104,17 @@ class Infoscreen():
     def run(self):
 
         while True:
+
             self.lock.acquire()
+            
             self.stdscr.clear()
-            self.timew.show()
-            self.tempw.show()
-            self.mpdw.show()
-            self.trafficw.show()
-            self.statusw.show()
-            self.hbw.show()
-            self.skyw.show()
+            for registration in self.registered_windows:
+                registration["window"].show()
+                
             self.lock.release()
+            
             time.sleep(0.1)
+            
 
 #        if (not isOn['tuer'] and not blank):
 #            blank = True

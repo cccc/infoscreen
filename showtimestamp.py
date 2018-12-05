@@ -2,9 +2,9 @@
 
 import curses
 import time
-from curses.textpad import Textbox, rectangle
 from datetime import datetime
 from curses import wrapper
+from widgets import rectangle
 
 class timewin:
     def __init__(self, xpos, ypos, width, height):
@@ -13,10 +13,10 @@ class timewin:
         self.width = width
         self.xpos = xpos
         self.ypos = ypos
-    def show(self):
-        self.win.erase()
         self.win.addstr(0, 0, "Current time:")
-        rectangle(self.win, 1,0, self.height-2,self.width-2)
+        rectangle(self.win, 0, 1, self.width, self.height-1)
+        
+    def show(self):
         self.win.addstr(2,2, "{:%H:%M:%S}".format(datetime.now()))
         self.win.refresh()
 

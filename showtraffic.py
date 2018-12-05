@@ -3,9 +3,10 @@
 import time
 
 import curses
-from curses.textpad import Textbox, rectangle
 from datetime import datetime
 from curses import wrapper
+from widgets import Table, rectangle
+import numbers
 
 class trafficwin:
     def __init__(self, xpos, ypos, width, height):
@@ -14,7 +15,59 @@ class trafficwin:
         self.width = width
         self.xpos = xpos
         self.ypos = ypos
-        self.win.erase()
+        self.table = Table(
+                self.win,
+                1,
+                2,
+                width-2,
+                height-3,
+                [
+                    { # TIME
+                        "width": 8,
+                        "text": lambda col,row,dep,data: dep["timetable"] if "timetable" in dep else "",
+                        "attributes": [curses.color_pair(0),curses.color_pair(3)]
+                    },
+                    { # LINE
+                        "width": 6,
+                        "text": lambda col,row,dep,data: dep["line"] if "line" in dep else "",
+                        "attributes": [curses.color_pair(0),curses.color_pair(3)]
+                    },
+                    { # DIRECTION
+                        "width": self.width - 2 - 8 - 6 - 9 - 9,
+                        "text": lambda col,row,dep,data: dep["direction"] if "direction" in dep else "",
+                        "attributes": [curses.color_pair(0),curses.color_pair(3)]
+                    },
+                    { # RELTIME
+                        "width": 9,
+                        "text": lambda col,row,dep,data:
+                            ("%d Min." % dep['reldeparture']) if isinstance(dep['reldeparture'], numbers.Number) else str(dep['reldeparture']),
+                        "attributes": [curses.color_pair(0),curses.color_pair(3)]
+                    },
+                    { # DELAY
+                        "width": 9,
+                        "text": lambda col,row,dep,data:
+                            ("(%+d Min)" % dep["delay"] ) if "delay" in dep else "",
+                        "attributes": lambda col,row,dep,data:
+                            curses.color_pair(
+                                (1 if row%2 is 0 else 4) 
+                                if dep["delay"] > 1 else
+                                (
+                                    (0 if row%2 is 0 else 3)
+                                    if dep["delay"] < -1 else
+                                    (2 if row%2 is 0 else 5)
+                                )
+                            )
+                            if "delay" in dep else
+                            curses.color_pair(0 if row%2 is 0 else 3),
+                    }
+                ],
+                {
+                    "line_delay": 0.025
+                }
+            )
+        
+        self.win.addstr(0,0,"Departures")
+        rectangle(self.win,0,1,self.width,self.height-1)
 
     def update(self, dep):
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLUE)
@@ -24,35 +77,14 @@ class trafficwin:
         try:
             #delays = sum(map(lambda x: x["delay"] if "delay" in x and x["delay"] > 0 else 0, dep["departures"]))
             delays = 0
-            self.win.addstr(0,0,
-                            "".join(("Departures ", dep['srvtime'],
-                                     " | Total Delay: %d Min." % (delays) if delays > 0 else "")))
-            for s in range(0, self.height-4):
-                #if (s > self.height-5):
-                #    break
-                self.win.addstr(2+s,2,' '*(self.width-3), curses.color_pair(0 if (s%2)==0 else 3))
-                if (s < len(dep['departures'])):
-                    nextdep = dep['departures'][s]
-                    if ('timetable' in nextdep):
-                        self.win.addstr(2+s, 2, nextdep['timetable'],curses.color_pair(0 if (s%2)==0 else 3))
-                    self.win.addstr(2+s,10,(nextdep['line']+'\t'+nextdep['direction'])[0:self.width-31], curses.color_pair(0 if (s%2)==0 else 3))
-                    if (type(nextdep['reldeparture']) == int or type(nextdep['reldeparture']) == float):
-                        self.win.addstr(2+s,self.width-20,("%d Min." % nextdep['reldeparture'] if nextdep['reldeparture'] >= 1 else "Sofort"),curses.color_pair(0 if (s%2)==0 else 3))
-                    else:
-                        self.win.addstr(2+s,self.width-20,str(nextdep['reldeparture']),curses.color_pair(0 if (s%2)==0 else 3))
-                    if ('delay' in nextdep):
-                        if (nextdep['delay'] > 1):
-                            self.win.addstr(2+s,self.width-10,"(+%d Min)" % nextdep['delay'],curses.color_pair(1 if (s%2)==0 else 4))
-                        elif (nextdep['delay'] < -1):
-                            self.win.addstr(2+s,self.width-10,"(%d Min)" % nextdep['delay'],curses.color_pair(0 if (s%2)==0 else 3))
-                        else:
-                            self.win.addstr(2+s,self.width-10,"(+0 Min)",curses.color_pair(2 if (s%2)==0 else 5))
-                self.win.refresh()
-                time.sleep(0.025)
+            self.win.addstr(0,0,F"Departures {dep['srvtime']} ")
+            #" | Total Delay: %d Min." % (delays) if delays > 0 else ""
+            
+            self.table.apply_data(dep["departures"])
+                
         except Exception as msg:
             self.win.addstr(2,2,"Something went wrong! " + str(msg), curses.color_pair(1))
 
     def show(self):
-        rectangle(self.win,1,0,self.height-2,self.width-1)
         self.win.refresh()
 

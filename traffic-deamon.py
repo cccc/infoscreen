@@ -138,7 +138,7 @@ if __name__ == "__main__":
     mqttc.on_connect = on_connect
     mqttc.will_set('heartbeat/trafficker', bytearray(b'\x00'), 2, True)
 
-    mqttc.connect("172.23.23.110",1883,60)
+    mqttc.connect("localhost",1883,60)
     mqttc.loop_start()
     trfc = trafficd( "https://www.vrsinfo.de/index.php?eID=tx_vrsinfo_ass2_departuremonitor&i=LEbuNjirOBzyGfCXaM9GxZQ47Dq8S4ET",
             "https://www.vrsinfo.de/index.php?eID=tx_vrsinfo_ass2_departuremonitor&i=N5Kq9iKszPov29W46gjTFoILylOK86zL",

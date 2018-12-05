@@ -3,11 +3,12 @@
 import os
 import curses
 
+import showstatus
 import showtimestamp
+import showtemp
+import showbikes
 import showmpd
 import showtraffic
-import showtemp
-import showstatus
 import showheartbeat
 import showsky
 import dosockets
@@ -20,14 +21,83 @@ class Livingroom(Infoscreen):
 
     def _init_windows(self):
 
-        self.statusw = showstatus.statuswin(40,2,20,1)
-        self.trafficw = showtraffic.trafficwin(1,11,76,23)
-        self.tempw = showtemp.tempwin(20, 1, 14, 5, "28-000008a0fd0b")
-        self.timew = showtimestamp.timewin(1,1,13,5)
-        self.mpdw = showmpd.mpdwin(1,6,76,5)
-        self.hbw = showheartbeat.heartbeatwin(79,11,28,23)
-        self.skyw = showsky.skywin(79,1,28,10)
-        self.socket = dosockets.sockets()
+        statusw = showstatus.statuswin(5,2,20,1)
+        self.add_window(statusw,[{
+                "subscribe" : [("club/status",2)],
+                "listen"    : "club/status",
+                "callback"  : statusw.update,
+                "json"      : False,
+                "utf8"      : False
+            }])
+        
+        timew = showtimestamp.timewin(1,4,13,4)
+        self.add_window(timew,[])
+        
+        tempw = showtemp.tempwin(17, 4, 13, 4, "28-000008a0fd0b")
+        self.add_window(tempw,[])
+        
+        bikesw = showbikes.bikeswin(33,1,44,9)
+        self.add_window(bikesw,[{
+                "subscribe" : [("bikes/nextbike",2)],
+                "listen"    : "^bikes/",
+                "re"        : True,
+                "callback"  : bikesw.update
+            }])
+        
+        mpdw = showmpd.mpdwin(1,10,76,4)
+        self.add_window(mpdw,[{
+                "subscribe" : [("mpd/{}/state".format(self.mpd_name),2)],
+                "listen"    : "mpd/{}/state".format(self.mpd_name),
+                "callback"  : mpdw.update_state,
+                "json"      : False
+            },
+            {
+                "subscribe" : [("mpd/{}/song".format(self.mpd_name),2)],
+                "listen"    : "mpd/{}/song".format(self.mpd_name),
+                "callback"  : mpdw.update_song,
+                "json"      : False
+            }])
+        
+        trafficw = showtraffic.trafficwin(1,14,76,19)
+        self.add_window(trafficw,[{
+                "subscribe" : [("traffic/departures",2)],
+                "listen"    : "traffic/departures",
+                "callback"  : trafficw.update
+            }])
+        
+        hbw = showheartbeat.heartbeatwin(79,11,28,22)
+        self.add_window(hbw,[
+                {
+                    "subscribe" : [("heartbeat/#",2)],
+                    "listen"    : "^heartbeat/",
+                    "re"        : True,
+                    "callback"  : lambda message: hbw.update(message.topic, message.payload),
+                    "custom"    : True,
+                    "json"      : False
+                }
+            ])
+        
+        skyw = showsky.skywin(79,1,28,10)
+        self.add_window(skyw,[
+                {
+                    "subscribe" : [("skynet",2)],
+                    "listen"    : "skynet",
+                    "callback"  : skyw.update
+                }
+            ])
+        
+        ### This should be it's own daemon!
+        socket = dosockets.sockets()
+        self.add_window(hbw,[
+                {
+                    "subscribe" : [("socket/wohnzimmer/screen/#",2)],
+                    "listen"    : "^socket/wohnzimmer/screen/",
+                    "re"        : True,
+                    "callback"  : lambda message: socket.update(message.topic, message.payload),
+                    "custom"    : True,
+                    "json"      : False
+                }
+            ])
 
 
 def main(stdscr):
@@ -39,7 +109,7 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
-    info_screen = Livingroom("infoscreen/livingroom", stdscr)
+    info_screen = Livingroom("infoscreen/livingroom-dev", stdscr)
     info_screen.run()
 
 if __name__ == "__main__":
