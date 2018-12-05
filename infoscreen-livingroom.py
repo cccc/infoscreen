@@ -64,8 +64,7 @@ class Livingroom(Infoscreen):
                 {
                     "subscribe" : ("heartbeat/#",2),
                     "callback"  : lambda message: hbw.update(message.topic, message.payload),
-                    "custom"    : True,
-                    "json"      : False
+                    "custom"    : True
                 }
             ])
         
@@ -84,8 +83,7 @@ class Livingroom(Infoscreen):
                 {
                     "subscribe" : ("socket/wohnzimmer/screen/#",2),
                     "callback"  : lambda message: socket.update(message.topic, message.payload),
-                    "custom"    : True,
-                    "json"      : False
+                    "custom"    : True
                 }
             ])
 

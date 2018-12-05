@@ -6,6 +6,7 @@ import sys
 import re
 from threading import Lock
 import paho.mqtt.client as mqtt
+from paho.mqtt.client import topic_matches_sub
 
 class Infoscreen():
 
@@ -77,21 +78,24 @@ class Infoscreen():
 
         self.lock.acquire()
         
-        for registration in self.registered_windows:
-            for listener in registration["listeners"]:
-                if topic_matches_sub(listener["subscribe"][0], message.topic):
-                    if listener["custom"]:
-                        listener["callback"](message)
-                    else:
-                        payload = message.payload
-                        if listener["json"]:
-                            try:
-                                payload = json.loads(message.payload.decode("utf-8"))
-                            except Exception as msg:
-                                print("An error occured while parsing JSON for topic \"%s\" : %s" % (message.topic, str(msg)) )
-                        elif listener["utf8"]:
-                            payload = message.payload.decode("utf-8")
-                        listener["callback"](payload)
+        try:
+            for registration in self.registered_windows:
+                for listener in registration["listeners"]:
+                    if topic_matches_sub(listener["subscribe"][0], message.topic):
+                        if listener["custom"]:
+                            listener["callback"](message)
+                        else:
+                            payload = message.payload
+                            if listener["json"]:
+                                try:
+                                    payload = json.loads(message.payload.decode("utf-8"))
+                                except Exception as msg:
+                                    print("An error occured while parsing JSON for topic \"%s\" : %s" % (message.topic, str(msg)) )
+                            elif listener["utf8"]:
+                                payload = message.payload.decode("utf-8")
+                            listener["callback"](payload)
+        except Exception as msg:
+            print(msg)
 
         self.lock.release()
 
