@@ -79,9 +79,9 @@ class Livingroom(Infoscreen):
         
         ### This should be it's own daemon!
         socket = dosockets.sockets()
-        self.add_window(hbw,[
+        self.add_window(None,[
                 {
-                    "subscribe" : ("socket/wohnzimmer/screen/#",2),
+                    "subscribe" : ("socket/wohnzimmer/+/+",2),
                     "callback"  : lambda message: socket.update(message.topic, message.payload),
                     "custom"    : True
                 }

@@ -110,7 +110,8 @@ class Infoscreen():
             
             self.stdscr.clear()
             for registration in self.registered_windows:
-                registration["window"].show()
+                if registration["window"] is not None:
+                    registration["window"].show()
                 
             self.lock.release()
             
