@@ -23,8 +23,7 @@ class Livingroom(Infoscreen):
 
         statusw = showstatus.statuswin(5,2,20,1)
         self.add_window(statusw,[{
-                "subscribe" : [("club/status",2)],
-                "listen"    : "club/status",
+                "subscribe" : ("club/status",2),
                 "callback"  : statusw.update,
                 "json"      : False,
                 "utf8"      : False
@@ -38,39 +37,32 @@ class Livingroom(Infoscreen):
         
         bikesw = showbikes.bikeswin(33,1,44,9)
         self.add_window(bikesw,[{
-                "subscribe" : [("bikes/nextbike",2)],
-                "listen"    : "^bikes/",
-                "re"        : True,
+                "subscribe" : ("bikes/nextbike",2),
                 "callback"  : bikesw.update
             }])
         
         mpdw = showmpd.mpdwin(1,10,76,4)
         self.add_window(mpdw,[{
-                "subscribe" : [("mpd/{}/state".format(self.mpd_name),2)],
-                "listen"    : "mpd/{}/state".format(self.mpd_name),
+                "subscribe" : ("mpd/{}/state".format(self.mpd_name),2),
                 "callback"  : mpdw.update_state,
                 "json"      : False
             },
             {
-                "subscribe" : [("mpd/{}/song".format(self.mpd_name),2)],
-                "listen"    : "mpd/{}/song".format(self.mpd_name),
+                "subscribe" : ("mpd/{}/song".format(self.mpd_name),2),
                 "callback"  : mpdw.update_song,
                 "json"      : False
             }])
         
         trafficw = showtraffic.trafficwin(1,14,76,19)
         self.add_window(trafficw,[{
-                "subscribe" : [("traffic/departures",2)],
-                "listen"    : "traffic/departures",
+                "subscribe" : ("traffic/departures",2),
                 "callback"  : trafficw.update
             }])
         
         hbw = showheartbeat.heartbeatwin(79,11,28,22)
         self.add_window(hbw,[
                 {
-                    "subscribe" : [("heartbeat/#",2)],
-                    "listen"    : "^heartbeat/",
-                    "re"        : True,
+                    "subscribe" : ("heartbeat/#",2),
                     "callback"  : lambda message: hbw.update(message.topic, message.payload),
                     "custom"    : True,
                     "json"      : False
@@ -80,7 +72,7 @@ class Livingroom(Infoscreen):
         skyw = showsky.skywin(79,1,28,10)
         self.add_window(skyw,[
                 {
-                    "subscribe" : [("skynet",2)],
+                    "subscribe" : ("skynet",2),
                     "listen"    : "skynet",
                     "callback"  : skyw.update
                 }
@@ -90,9 +82,7 @@ class Livingroom(Infoscreen):
         socket = dosockets.sockets()
         self.add_window(hbw,[
                 {
-                    "subscribe" : [("socket/wohnzimmer/screen/#",2)],
-                    "listen"    : "^socket/wohnzimmer/screen/",
-                    "re"        : True,
+                    "subscribe" : ("socket/wohnzimmer/screen/#",2),
                     "callback"  : lambda message: socket.update(message.topic, message.payload),
                     "custom"    : True,
                     "json"      : False

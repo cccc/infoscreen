@@ -49,10 +49,9 @@ class Infoscreen():
 
         else:
             self.mqttc.subscribe([
-                    subscription
+                    listener["subscribe"]
                     for registration in self.registered_windows
                     for listener in registration["listeners"]
-                    for subscription in listener["subscribe"]
                 ])
 
             self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
@@ -63,9 +62,7 @@ class Infoscreen():
                 "listeners": [
                         {
                             "custom"    : listener["custom"] if "custom" in listener else False,
-                            "listen"    : re.compile(listener["listen"]) if "re" in listener and listener["re"] else listener["listen"],
-                            "subscribe" : listener["subscribe"] if "subscribe" in listener else [],
-                            "re"        : listener["re"] if "re" in listener else False,
+                            "subscribe" : listener["subscribe"] if "subscribe" in listener else None,
                             "json"      : listener["json"] if "json" in listener else True,
                             "utf8"      : listener["utf8"] if "utf8" in listener else True,
                             "callback"  : listener["callback"]
@@ -82,7 +79,7 @@ class Infoscreen():
         
         for registration in self.registered_windows:
             for listener in registration["listeners"]:
-                if (listener["listen"].search(message.topic) if listener["re"] else listener["listen"] == message.topic):
+                if (topic_matches_sub(listener["subscribe"][0], message.topic):
                     if listener["custom"]:
                         listener["callback"](message)
                     else:
@@ -91,7 +88,7 @@ class Infoscreen():
                             try:
                                 payload = json.loads(message.payload.decode("utf-8"))
                             except Exception as msg:
-                                print("An error occured while parsing JSON for topic \"%s\" : {str(msg)}" % message.topic)
+                                print("An error occured while parsing JSON for topic \"%s\" : %s" % (message.topic, str(msg)) )
                         elif listener["utf8"]:
                             payload = message.payload.decode("utf-8")
                         listener["callback"](payload)
