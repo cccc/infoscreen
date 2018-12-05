@@ -79,7 +79,7 @@ class Infoscreen():
         
         for registration in self.registered_windows:
             for listener in registration["listeners"]:
-                if (topic_matches_sub(listener["subscribe"][0], message.topic):
+                if topic_matches_sub(listener["subscribe"][0], message.topic):
                     if listener["custom"]:
                         listener["callback"](message)
                     else:
