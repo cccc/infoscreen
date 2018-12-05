@@ -20,6 +20,16 @@ class Livingroom(Infoscreen):
     mpd_name = 'baellebad'
 
     def _init_windows(self):
+        
+        ### This should be it's own daemon!
+        socket = dosockets.sockets()
+        self.add_window(None,[
+                {
+                    "subscribe" : ("socket/wohnzimmer/+/+",2),
+                    "callback"  : lambda message: socket.update(message.topic, message.payload),
+                    "custom"    : True
+                }
+            ])
 
         statusw = showstatus.statuswin(5,2,20,1)
         self.add_window(statusw,[{
@@ -74,16 +84,6 @@ class Livingroom(Infoscreen):
                     "subscribe" : ("skynet",2),
                     "listen"    : "skynet",
                     "callback"  : skyw.update
-                }
-            ])
-        
-        ### This should be it's own daemon!
-        socket = dosockets.sockets()
-        self.add_window(None,[
-                {
-                    "subscribe" : ("socket/wohnzimmer/+/+",2),
-                    "callback"  : lambda message: socket.update(message.topic, message.payload),
-                    "custom"    : True
                 }
             ])
 
