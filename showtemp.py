@@ -21,8 +21,8 @@ class tempwin:
         sf = open("/sys/bus/w1/devices/"+self.sensor+"/w1_slave")
         if (re.match(r"([0-9a-f]{2} ){9}: crc=[0-9a-f]{2} YES", sf.readline())):
             temp = float(re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", sf.readline()).group(2))/1000
-            self.win.addstr(2,1, (str(temp)+" °C").ljust(self.width-2))
+            self.win.addstr(2,2, (str(temp)+" °C").ljust(self.width-3))
         else:
-            self.win.addstr(2,1, "-".ljust(self.width-2))
+            self.win.addstr(2,2, "-".ljust(self.width-3))
         self.win.refresh()
 
