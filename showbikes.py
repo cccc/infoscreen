@@ -22,7 +22,7 @@ class bikeswin:
                 "width":width-2-8-5
             },{
                 "text": lambda col,row,bike,data: ("%dm" % bike["distance"]) if "distance" in bike else "",
-                "attributes":[curses.color_pair(0),curses.color_pair(6)],
+                "attributes":[curses.color_pair(0),curses.color_pair(3)],
                 "width":5
             }],
             {
@@ -32,7 +32,7 @@ class bikeswin:
         rectangle(self.win,0,1,self.width,self.height-1)
 
     def update(self, data):
-        curses.init_pair(6, curses.COLOR_WHITE, curses.COLOR_RED)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLUE)
         
         try:
             self.win.addstr(0,0,"Bikes %s" % data['time'])

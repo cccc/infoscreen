@@ -11,9 +11,9 @@ class heartbeatwin:
         
         self.table = Table(
             self.win,
-            1,
             2,
-            self.width-2,
+            2,
+            self.width-3,
             self.height-3,
             [
                 {
