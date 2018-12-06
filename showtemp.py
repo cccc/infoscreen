@@ -2,7 +2,7 @@
 
 import os, re
 import curses
-from widgets import rectangle
+from widgets import rectangle, Label
 from datetime import datetime
 from curses import wrapper
 
