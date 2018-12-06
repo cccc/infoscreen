@@ -8,14 +8,6 @@ from threading import Lock
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import topic_matches_sub
 
-import logging
-logger = logging.getLogger('infoscreen')
-hdlr = logging.FileHandler('/opt/infoscreen/infoscreen.log')
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr) 
-logger.setLevel(logging.INFO)
-
 class Infoscreen():
 
     mqtt_host = "autoc4"
@@ -31,8 +23,8 @@ class Infoscreen():
         
         self.registered_windows = list()
 
-        self._init_mqtt(clientid)
         self._init_windows()
+        self._init_mqtt(clientid)
 
     def _init_mqtt(self, clientid):
 
@@ -57,19 +49,12 @@ class Infoscreen():
             sys.exit(1) # connect failed # TODO
 
         else:
-            logger.info("Subscribing to: "+str([
-                    listener["subscribe"]
-                    for registration in self.registered_windows
-                    for listener in registration["listeners"]
-                ]))
 
             self.mqttc.subscribe([
                     listener["subscribe"]
                     for registration in self.registered_windows
                     for listener in registration["listeners"]
                 ])
-            
-            logger.info("Successfully subscribed!")
 
             self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
     
@@ -94,8 +79,6 @@ class Infoscreen():
 
         self.lock.acquire()
         
-        logger.info("Got message: "+message.payload)
-        
         try:
             for registration in self.registered_windows:
                 for listener in registration["listeners"]:
@@ -114,8 +97,6 @@ class Infoscreen():
                             listener["callback"](payload)
         except Exception as msg:
             print(msg)
-            
-        logger.info("Processed message: "+message.payload)
 
         self.lock.release()
 
