@@ -3,7 +3,7 @@
 import curses
 from datetime import datetime
 from curses import wrapper
-from widgets import Table, rectangle
+from widgets import Table, rectangle, Label
 
 class bikeswin:
     def __init__(self, xpos, ypos, width, height):
@@ -12,6 +12,8 @@ class bikeswin:
         self.width = width
         self.xpos = xpos
         self.ypos = ypos
+        
+        self.label = Label(self.win, 0, 0, self.width, "Bikes not connected").draw()
         self.table = Table(self.win,1,2,width-2,height-3,[{
                 "text": lambda col,row,bike,data: ("#%s" % bike["bike_number"]) if "bike_number" in bike else "",
                 "attributes":[curses.color_pair(0),curses.color_pair(3)],
@@ -28,14 +30,13 @@ class bikeswin:
             {
                 "line_delay": 0.025
             })
-        self.win.erase()
         rectangle(self.win,0,1,self.width,self.height-1)
 
     def update(self, data):
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLUE)
         
         try:
-            self.win.addstr(0,0,"Bikes %s" % data['time'])
+            self.label.update_text("Bikes %s" % data['time']).draw()
             
             bikes = data["bikes"]
             bikes.sort(key=lambda bike: bike["distance"])

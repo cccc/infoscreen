@@ -31,7 +31,7 @@ class Livingroom(Infoscreen):
                 }
             ])
 
-        statusw = showstatus.statuswin(5,2,20,1)
+        statusw = showstatus.statuswin(1,2,29,1)
         self.add_window(statusw,[{
                 "subscribe" : ("club/status",2),
                 "callback"  : statusw.update,

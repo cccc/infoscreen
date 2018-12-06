@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import curses
-from widgets import rectangle
+from widgets import rectangle, Label
 from datetime import datetime
 from curses import wrapper
 
@@ -11,33 +11,21 @@ class mpdwin:
         self.width = width
         self.xpos = xpos
         self.ypos = ypos
-
-        self.state = 'stop'
-        self.song = ''
         
         rectangle(self.win,0,1,self.width,self.height-1)
-        self.update()
+        self.state_label = Label(self.win, 0, 0, self.width, "MPD not Connected").draw()
+        self.song_label = Label(self.win, 1, 2, self.width-2, padding_left=1)
 
     def update_state(self, state):
-        self.state = state
-        self.update()
+        if state == 'pause':
+            self.state_label.update_text("Paused:").draw()
+        elif state == 'play':
+            self.state_label.update_text("Now Playing:").draw()
+        elif state == 'stop':
+            self.state_label.update_text("Stopped.").draw()
 
     def update_song(self, song):
-        self.song = song
-        self.update()
-    
-    def update(self):
-        #self.win.erase()
-
-        if self.state == 'pause':
-            self.win.addstr(0,0, "Paused:")
-        elif self.state == 'play':
-            self.win.addstr(0,0, "Now Playing:")
-        elif self.state == 'stop':
-            self.win.addstr(0,0, "Stopped.")
-
-
-        self.win.addnstr(2,2,self.song, self.width-2)
+        self.song_label.update_text(song).draw()
 
     def show(self):
         self.win.refresh()

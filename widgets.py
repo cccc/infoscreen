@@ -6,16 +6,16 @@ import curses
 class Table:
     
     def __init__(self,win,x,y,w,h,col_defs,properties={}):
-        self.window = win
+        self.window             = win
         self.column_definitions = col_defs
-        self.x = x
-        self.y = y
-        self.width = w
-        self.height = h
-        self.properties = properties
+        self.x                  = x
+        self.y                  = y
+        self.width              = w
+        self.height             = h
+        self.properties         = properties
     
     def calculateColDefs(self):
-        ret=[]
+        ret = []
         col_offset = 0
         index = 0
         
@@ -85,10 +85,10 @@ class Table:
                     
                 for col in range(0,len(calculatedColDefs)):
                     
-                    text = self.properties["default_text"] if "default_text" in self.properties else ""
-                    color = self.properties["default_color"] if "default_color" in self.properties else None
-                    alignment = self.properties["default_alignment"] if "default_alignment" in self.properties else 0
-                    attributes = self.properties["default_attributes"] if "default_attributes" in self.properties else 0
+                    text        = self.properties["default_text"] if "default_text" in self.properties else ""
+                    color       = self.properties["default_color"] if "default_color" in self.properties else None
+                    alignment   = self.properties["default_alignment"] if "default_alignment" in self.properties else 0
+                    attributes  = self.properties["default_attributes"] if "default_attributes" in self.properties else 0
                     
                     col_def=calculatedColDefs[col]
                     
@@ -120,9 +120,7 @@ class Table:
                     elif alignment is 2:
                         text = text.rjust(col_def["width"])
                     
-                    text = text[:col_def["width"]]
-                    text = " " * col_def["padding_left"] + text
-                    text += " " * col_def["padding_right"]
+                    text = formatText(text, col_def["width"], alignment, col_def["padding_left"], col_def["padding_right"])
                     
                     if "attributes" in col_def:
                         attributes_def = col_def["attributes"]
@@ -140,22 +138,77 @@ class Table:
                 if record is not None and "line_delay" in self.properties:
                     sleep(self.properties["line_delay"])
 
-def rectangle(window, x, y, w, h, color=0):
-    hch = curses.ACS_HLINE
-    vch = curses.ACS_VLINE
+class Label:
+    def __init__(self, window, x, y, w, text="", attributes=0, alignment=0, padding_left=0, padding_right=0, padding_is_width=True):
+        self.window         = window
+        self.x              = x
+        self.y              = y
+        self.width          = (w - padding_left - padding_right) if padding_is_width else w
+        self.text           = text
+        self.attributes     = attributes
+        self.alignment      = alignment
+        self.padding_left   = padding_left
+        self.padding_right  = padding_right
+    
+    def update_text(self, text):
+        self.text = text
+        return self
+    
+    def clear_text(self):
+        self.text = ""
+        return self
+    
+    def update_attributes(self, attributes):
+        self.attributes = attributes
+        return self
+    
+    def draw(self):
+        text = formatText(self.text, self.width, self.alignment, self.padding_left, self.padding_right)
+        self.window.addstr(self.y, self.x, text, self.attributes)
+        self.window.refresh()
+        #print(text)
+        return self
+        
+
+def formatText(text, width, alignment=1, padding_left=0, padding_right=0):
+        #alignment
+        if alignment == 0:
+            text = text.ljust(width)
+        elif alignment == 1:
+            text = text.center(width)
+        elif alignment == 2:
+            text = text.rjust(width)
+        #crop width
+        text = text[:width]
+        #add padding
+        text = " " * padding_left + text
+        text += " " * padding_right
+        
+        return text
+
+def rectangle(window, x, y, w, h):
+    
+    t=curses.ACS_HLINE
+    b=curses.ACS_HLINE
+    l=curses.ACS_VLINE
+    r=curses.ACS_VLINE
+    ul=curses.ACS_ULCORNER
+    ur=curses.ACS_URCORNER
+    ll=curses.ACS_LLCORNER
+    lr=curses.ACS_LRCORNER
 
     # Borders
-    window.hline(y,         x + 1,      hch, w - 2)  # top
-    window.vline(y + 1,     x + w - 1,  vch, h - 2)  # right
-    window.hline(y + h - 1, x + 1,      hch,  w - 2)  # bottom
-    window.vline(y + 1,     x,          vch, h - 2)  # left
+    window.hline(y,         x + 1,      t,  w - 2)  # top
+    window.vline(y + 1,     x + w - 1,  l,  h - 2)  # right
+    window.hline(y + h - 1, x + 1,      b,  w - 2)  # bottom
+    window.vline(y + 1,     x,          r,  h - 2)  # left
 
     # Corners
-    window.addch(y,         x,         curses.ACS_ULCORNER)
-    window.addch(y,         x + w - 1, curses.ACS_URCORNER)
-    window.addch(y + h - 1, x,         curses.ACS_LLCORNER)
+    window.addch(y,         x,         ul)
+    window.addch(y,         x + w - 1, ur)
+    window.addch(y + h - 1, x,         ll)
     
     try:
-        window.addch(y + h - 1, x + w - 1, curses.ACS_LRCORNER)
+        window.addch(y + h - 1, x + w - 1, lr)
     except Exception as e:
         pass 

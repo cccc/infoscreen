@@ -14,15 +14,17 @@ class tempwin:
         self.xpos = xpos
         self.ypos = ypos
         self.sensor = sensor
+        
         self.win.addstr(0,0,"Temperature:")
+        self.label = Label(self.win, 1, 2, self.width-2, "-", padding_left=1).draw()
         rectangle(self.win,0,1,self.width,self.height-1)
     
     def show(self):
         sf = open("/sys/bus/w1/devices/"+self.sensor+"/w1_slave")
         if (re.match(r"([0-9a-f]{2} ){9}: crc=[0-9a-f]{2} YES", sf.readline())):
             temp = float(re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", sf.readline()).group(2))/1000
-            self.win.addstr(2,2, (str(temp)+" °C").ljust(self.width-3))
+            self.label.update_text(str(temp)+" °C").draw()
         else:
-            self.win.addstr(2,2, "-".ljust(self.width-3))
+            self.label.update_text("-").draw()
         self.win.refresh()
 

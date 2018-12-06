@@ -5,7 +5,7 @@ import time
 import curses
 from datetime import datetime
 from curses import wrapper
-from widgets import Table, rectangle
+from widgets import Table, rectangle, Label
 import numbers
 
 class trafficwin:
@@ -15,6 +15,8 @@ class trafficwin:
         self.width = width
         self.xpos = xpos
         self.ypos = ypos
+        
+        self.label = Label(self.win, 0, 0, self.width, "Traffic not connected").draw()
         self.table = Table(
                 self.win,
                 1,
@@ -65,8 +67,6 @@ class trafficwin:
                     "line_delay": 0.025
                 }
             )
-        
-        self.win.addstr(0,0,"Departures")
         rectangle(self.win,0,1,self.width,self.height-1)
 
     def update(self, dep):
@@ -76,10 +76,10 @@ class trafficwin:
 
         try:
             #delays = sum(map(lambda x: x["delay"] if "delay" in x and x["delay"] > 0 else 0, dep["departures"]))
-            delays = 0
-            self.win.addstr(0,0,"Departures %s" % dep['srvtime'])
             #" | Total Delay: %d Min." % (delays) if delays > 0 else ""
+            delays = 0
             
+            self.label.update_text("Departures %s" % dep['srvtime']).draw()
             self.table.apply_data(dep["departures"])
                 
         except Exception as msg:
