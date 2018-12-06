@@ -45,17 +45,17 @@ class Infoscreen():
 
     def on_connect(self, a, b, c, rc):
 
-        if rc != 0:
-            sys.exit(1) # connect failed # TODO
+        #if rc != 0:
+        #    sys.exit(1) # connect failed # TODO
 
-        else:
-            self.mqttc.subscribe([
-                    listener["subscribe"]
-                    for registration in self.registered_windows
-                    for listener in registration["listeners"]
-                ])
+        #else:
+        self.mqttc.subscribe([
+                listener["subscribe"]
+                for registration in self.registered_windows
+                for listener in registration["listeners"]
+            ])
 
-            self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
+        self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
     
     def add_window(self, window, listeners):
         self.registered_windows.append({
