@@ -11,7 +11,6 @@ import showmpd
 import showtraffic
 import showheartbeat
 import showsky
-import dosockets
 
 from infoscreen import Infoscreen
 
@@ -20,16 +19,6 @@ class Livingroom(Infoscreen):
     mpd_name = 'baellebad'
 
     def _init_windows(self):
-        
-        ### This should be it's own daemon!
-        socket = dosockets.sockets()
-        self.add_window(None,[
-                {
-                    "subscribe" : ("socket/wohnzimmer/+/+",2),
-                    "callback"  : lambda message: socket.update(message.topic, message.payload),
-                    "custom"    : True
-                }
-            ])
 
         statusw = showstatus.statuswin(1,2,29,1)
         self.add_window(statusw,[{

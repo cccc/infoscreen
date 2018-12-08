@@ -6,7 +6,6 @@ import sys
 import re
 from threading import Lock
 import paho.mqtt.client as mqtt
-from paho.mqtt.client import topic_matches_sub
 
 class Infoscreen():
 
@@ -82,7 +81,7 @@ class Infoscreen():
         try:
             for registration in self.registered_windows:
                 for listener in registration["listeners"]:
-                    if topic_matches_sub(listener["subscribe"][0], message.topic):
+                    if mqtt.topic_matches_sub(listener["subscribe"][0], message.topic):
                         if listener["custom"]:
                             listener["callback"](message)
                         else:
