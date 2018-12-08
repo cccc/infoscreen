@@ -69,7 +69,7 @@ class Livingroom(Infoscreen):
                 "callback"  : trafficw.update
             }])
         
-        hbw = showheartbeat.heartbeatwin(79,11,28,22)
+        hbw = showheartbeat.heartbeatwin(79,10,28,23)
         self.add_window(hbw,[
                 {
                     "subscribe" : ("heartbeat/#",2),
@@ -78,7 +78,7 @@ class Livingroom(Infoscreen):
                 }
             ])
         
-        skyw = showsky.skywin(79,1,28,10)
+        skyw = showsky.skywin(79,1,28,9)
         self.add_window(skyw,[
                 {
                     "subscribe" : ("skynet",2),
