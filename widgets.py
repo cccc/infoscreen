@@ -132,7 +132,7 @@ class Table:
                         else:
                             attributes = attributes_def
                     
-                    self.window.addstr(self.y + row, self.x + col_def["offset"], text, attributes)
+                    self.window.addnstr(self.y + row, self.x + col_def["offset"], text, col_def["padding_left"] + col_def["width"] + col_def["padding_right"], attributes)
                 
                 self.window.refresh()
                 if record is not None and "line_delay" in self.properties:
@@ -164,7 +164,7 @@ class Label:
     
     def draw(self):
         text = formatText(self.text, self.width, self.alignment, self.padding_left, self.padding_right)
-        self.window.addstr(self.y, self.x, text, self.attributes)
+        self.window.addnstr(self.y, self.x, text, self.padding_left + self.width + self.padding_right, self.attributes)
         self.window.refresh()
         #print(text)
         return self
