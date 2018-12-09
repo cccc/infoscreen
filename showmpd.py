@@ -25,8 +25,9 @@ class mpdwin:
             self.state_label.update_text("Stopped.").draw()
 
     def update_song(self, song):
-        self.song_label.update_text(song)
+        self.song_label.update_text(song).draw(False)
         rectangle(self.win,0,1,self.width,self.height-1)
+        self.window.refresh()
 
     def show(self):
         self.win.refresh()

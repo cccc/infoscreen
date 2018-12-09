@@ -162,10 +162,11 @@ class Label:
         self.attributes = attributes
         return self
     
-    def draw(self):
+    def draw(self, refresh=True):
         text = formatText(self.text, self.width, self.alignment, self.padding_left, self.padding_right)
         self.window.addstr(self.y, self.x, text, self.attributes)
-        self.window.refresh()
+        if refresh:
+            self.window.refresh()
         #print(text)
         return self
         
