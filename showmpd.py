@@ -26,6 +26,7 @@ class mpdwin:
 
     def update_song(self, song):
         self.song_label.update_text(song).draw()
+        rectangle(self.win,0,1,self.width,self.height-1)
 
     def show(self):
         self.win.refresh()
