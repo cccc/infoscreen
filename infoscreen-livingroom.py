@@ -80,7 +80,7 @@ class Livingroom(Infoscreen):
         weatherw = showweather.weatherwin(79,30,28,6)
         self.add_window(hbw,[
                 {
-                    "subscribe" : ("weather/1",2),
+                    "subscribe" : ("weather",2),
                     "callback"  : weatherw.update,
                     "json"    : False
                 }
