@@ -1,0 +1,31 @@
+#!/bin/bash
+
+service_name="pisockets";
+user="infoscreen";
+
+#INSTALL DEPENDENCIES
+apt-get install -y --no-upgrade python3 python3-pip;
+pip install "paho-mqtt";
+pip install "bs4";
+
+#CREATE UNIT FILE
+echo "[Unit]
+Description=
+After=network.target
+
+[Service]
+ExecStart=$(realpath $(dirname $0))/${service_name}.py
+User=${user}
+Type=simple
+Restart=always
+RestartSec=3
+KillMode=process
+
+[Install]
+WantedBy=getty.target
+" > /etc/systemd/system/${service_name}.service;
+
+#ENABLE SERVICE
+systemctl daemon-reload;
+systemctl start ${service_name}.service
+systemctl enable ${service_name}.service
