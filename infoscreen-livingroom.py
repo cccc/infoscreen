@@ -67,7 +67,7 @@ class Livingroom(Infoscreen):
                 }
             ])
         
-        hbw = showheartbeat.heartbeatwin(79,10,20,23)
+        hbw = showheartbeat.heartbeatwin(79,10,28,23)
         self.add_window(hbw,[
                 {
                     "subscribe" : ("heartbeat/#",2),
