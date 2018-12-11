@@ -77,7 +77,7 @@ class Livingroom(Infoscreen):
                 }
             ])
         
-        weatherw = showweather.weatherwin(79,30,28,6)
+        weatherw = showweather.weatherwin(70,30,19,6)
         self.add_window(hbw,[
                 {
                     "subscribe" : ("weather",2),

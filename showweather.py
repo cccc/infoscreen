@@ -12,6 +12,7 @@ class weatherwin:
 
     def update(self, data):
         self.win.addstr(0,0,data)
+        self.win.refresh()
 
     def show(self):
         self.win.refresh()
