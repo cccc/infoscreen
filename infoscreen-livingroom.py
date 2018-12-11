@@ -11,7 +11,6 @@ import showmpd
 import showtraffic
 import showheartbeat
 import showsky
-import showweather
 
 from infoscreen import Infoscreen
 
@@ -68,21 +67,12 @@ class Livingroom(Infoscreen):
                 }
             ])
         
-        hbw = showheartbeat.heartbeatwin(79,10,28,16)
+        hbw = showheartbeat.heartbeatwin(79,10,20,23)
         self.add_window(hbw,[
                 {
                     "subscribe" : ("heartbeat/#",2),
                     "callback"  : lambda message: hbw.update(message.topic, message.payload),
                     "custom"    : True
-                }
-            ])
-        
-        weatherw = showweather.weatherwin(10,30,30,6)
-        self.add_window(hbw,[
-                {
-                    "subscribe" : ("weather",2),
-                    "callback"  : weatherw.update,
-                    "json"    : False
                 }
             ])
 
