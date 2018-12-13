@@ -9,8 +9,9 @@ import showtemp
 import showbikes
 import showmpd
 import showtraffic
-import showheartbeat
 import showsky
+import showheartbeat
+import showweather
 
 from infoscreen import Infoscreen
 
