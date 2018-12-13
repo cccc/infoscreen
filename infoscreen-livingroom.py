@@ -68,7 +68,7 @@ class Livingroom(Infoscreen):
                 }
             ])
         
-        hbw = showheartbeat.heartbeatwin(79,10,28,18)
+        hbw = showheartbeat.heartbeatwin(79,10,28,17)
         self.add_window(hbw,[
                 {
                     "subscribe" : ("heartbeat/#",2),
@@ -77,7 +77,7 @@ class Livingroom(Infoscreen):
                 }
             ])
                 
-        weatherw = showweather.weatherwin(79,29,28,6);
+        weatherw = showweather.weatherwin(79,30,28,6);
         self.add_window(weatherw,[
                 {
                     "subscribe" : ("weather",2),
