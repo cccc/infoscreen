@@ -67,12 +67,21 @@ class Livingroom(Infoscreen):
                 }
             ])
         
-        hbw = showheartbeat.heartbeatwin(79,10,28,23)
+        hbw = showheartbeat.heartbeatwin(79,10,28,18)
         self.add_window(hbw,[
                 {
                     "subscribe" : ("heartbeat/#",2),
                     "callback"  : lambda message: hbw.update(message.topic, message.payload),
                     "custom"    : True
+                }
+            ])
+                
+        weatherw = showweather.weatherwin(79,29,28,6);
+        self.add_window(weatherw,[
+                {
+                    "subscribe" : ("weather",2),
+                    "callback"  : weatherw.update,
+                    "json"    : False
                 }
             ])
 
