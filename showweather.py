@@ -11,7 +11,7 @@ class weatherwin:
         self.ypos = ypos
 
     def update(self, data):
-        print(data)
+        self.window.addstr(0,0,data)
 
     def show(self):
         self.win.refresh()
