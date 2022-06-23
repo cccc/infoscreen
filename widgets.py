@@ -189,20 +189,20 @@ def formatText(text, width, alignment=1, padding_left=0, padding_right=0):
 
 def rectangle(window, x, y, w, h):
     
-    t=curses.ACS_HLINE
-    b=curses.ACS_HLINE
-    l=curses.ACS_VLINE
-    r=curses.ACS_VLINE
-    ul=curses.ACS_ULCORNER
-    ur=curses.ACS_URCORNER
-    ll=curses.ACS_LLCORNER
-    lr=curses.ACS_LRCORNER
+    t="\u2500"
+    b="\u2500"
+    l="\u2502"
+    r="\u2502"
+    ul="\u250c"
+    ur="\u2510"
+    ll="\u2514"
+    lr="\u2518"
 
     # Borders
-    window.hline(y,         x + 1,      t,  w - 2)  # top
-    window.vline(y + 1,     x + w - 1,  l,  h - 2)  # right
-    window.hline(y + h - 1, x + 1,      b,  w - 2)  # bottom
-    window.vline(y + 1,     x,          r,  h - 2)  # left
+    hline(window,   x + 1,      y,          t,  w - 2)  # top
+    vline(window,   x + w - 1,  y + 1,      l,  h - 2)  # right
+    hline(window,   x + 1,      y + h - 1,  b,  w - 2)  # bottom
+    vline(window,   x,          y + 1,      r,  h - 2)  # left
 
     # Corners
     window.addch(y,         x,         ul)
@@ -213,3 +213,11 @@ def rectangle(window, x, y, w, h):
         window.addch(y + h - 1, x + w - 1, lr)
     except Exception as e:
         pass 
+    
+def hline(window, x, y, ch, w):
+    for X in range(x, x+w):
+        window.addch(y,X,ch)
+        
+def vline(window, x, y, ch, h):
+    for Y in range(y, y+h):
+        window.addch(Y,x,ch)

@@ -31,8 +31,8 @@ class Livingroom(Infoscreen):
         timew = showtimestamp.timewin(1,4,13,4)
         self.add_window(timew,[])
         
-        tempw = showtemp.tempwin(17, 4, 13, 4, "28-000008a0fd0b")
-        self.add_window(tempw,[])
+        #tempw = showtemp.tempwin(17, 4, 13, 4, "28-000008a0fd0b")
+        #self.add_window(tempw,[])
         
         bikesw = showbikes.bikeswin(33,1,44,9)
         self.add_window(bikesw,[{
