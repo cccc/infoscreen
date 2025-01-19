@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
 
-import time
-
 import curses
-from datetime import datetime
-from curses import wrapper
 from widgets import Table, rectangle, Label
-import numbers
 
 class trafficwin:
     def __init__(self, xpos, ypos, width, height):
@@ -24,44 +19,31 @@ class trafficwin:
                 width-2,
                 height-3,
                 [
-                    { # TIME
-                        "width": 8,
-                        "text": lambda col,row,dep,data: dep["timetable"] if "timetable" in dep else "",
-                        "attributes": [curses.color_pair(0),curses.color_pair(3)]
-                    },
                     { # LINE
-                        "width": 6,
-                        "text": lambda col,row,dep,data: dep["line"] if "line" in dep else "",
-                        "attributes": [curses.color_pair(0),curses.color_pair(3)]
+                        "width": 10,
+                        "text": lambda col,row,dep,data: "   "+dep["line"],
+                        "attributes": [curses.color_pair(0), curses.color_pair(3)]
                     },
                     { # DIRECTION
-                        "width": self.width - 2 - 8 - 6 - 9 - 9,
-                        "text": lambda col,row,dep,data: dep["direction"] if "direction" in dep else "",
-                        "attributes": [curses.color_pair(0),curses.color_pair(3)]
+                        "width": width-8-9-6-5,
+                        "text": lambda col,row,dep,data: dep["direction"],
+                        "attributes": [curses.color_pair(0), curses.color_pair(3)]
                     },
-                    { # RELTIME
-                        "width": 9,
-                        "text": lambda col,row,dep,data:
-                            ("%d Min." % dep['reldeparture']) if isinstance(dep['reldeparture'], numbers.Number) else str(dep['reldeparture']),
+                    { # PLATFORM
+                        "width": 6,
+                        "text": lambda col,row,dep,data: dep["platform"],
+                        "attributes": [curses.color_pair(0), curses.color_pair(3)]
+                    },
+                    { # TIME
+                        "width": 6,
+                        "text": lambda col,row,dep,data: dep["departure"] if "departure" in dep else "",
                         "attributes": [curses.color_pair(0),curses.color_pair(3)]
                     },
                     { # DELAY
-                        "width": 9,
-                        "text": lambda col,row,dep,data:
-                            ("(%+d Min)" % dep["delay"] ) if "delay" in dep else "",
-                        "attributes": lambda col,row,dep,data:
-                            curses.color_pair(
-                                (1 if row%2 is 0 else 4) 
-                                if dep["delay"] > 1 else
-                                (
-                                    (0 if row%2 is 0 else 3)
-                                    if dep["delay"] < -1 else
-                                    (2 if row%2 is 0 else 5)
-                                )
-                            )
-                            if "delay" in dep else
-                            curses.color_pair(0 if row%2 is 0 else 3),
-                    }
+                        "width": 4,
+                        "text": lambda col,row,dep,data: dep["delay"],
+                        "attributes": [curses.color_pair(0), curses.color_pair(3)] 
+                    },
                 ],
                 {
                     "line_delay": 0.025
