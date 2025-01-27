@@ -2,9 +2,10 @@ import curses
 from datetime import datetime
 from widgets import Table, rectangle
 
+
 class skywin:
     def __init__(self, xpos, ypos, width, height):
-        self.win = curses.newwin(height,width, ypos, xpos)
+        self.win = curses.newwin(height, width, ypos, xpos)
         self.height = height
         self.width = width
         self.xpos = xpos
@@ -13,25 +14,33 @@ class skywin:
             self.win,
             1,
             2,
-            self.width-2,
-            self.height-3,
+            self.width - 2,
+            self.height - 3,
             [
-                { #TYPE
+                {  # TYPE
                     "width": 6,
-                    "text": lambda col, row, entry, data: "ISS" if entry['type'] == "iss" else "Ir%2d" % entry["satellite_num"]
+                    "text": lambda col, row, entry, data: (
+                        "ISS"
+                        if entry["type"] == "iss"
+                        else "Ir%2d" % entry["satellite_num"]
+                    ),
                 },
-                { #BRIGHTNESS
+                {  # BRIGHTNESS
                     "width": self.width - 2 - 6 - 12,
-                    "text": lambda col, row, entry, data: "%1.1f" % entry["brightness_float"]
+                    "text": lambda col, row, entry, data: "%1.1f"
+                    % entry["brightness_float"],
                 },
-                { #TIME
+                {  # TIME
                     "width": 12,
-                    "text": lambda col, row, entry, data: datetime.fromtimestamp(entry['timestamp']).strftime('%a %H:%M:%S')
-                }
-            ])
-        
+                    "text": lambda col, row, entry, data: datetime.fromtimestamp(
+                        entry["timestamp"]
+                    ).strftime("%a %H:%M:%S"),
+                },
+            ],
+        )
+
         self.win.addstr(0, 0, "Sky Events:")
-        rectangle(self.win,0,1,self.width,self.height-1)
+        rectangle(self.win, 0, 1, self.width, self.height - 1)
 
     def update(self, sky_data):
         try:

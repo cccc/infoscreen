@@ -7,7 +7,8 @@ import re
 from threading import Lock
 import paho.mqtt.client as mqtt
 
-class Infoscreen():
+
+class Infoscreen:
 
     mqtt_host = "autoc4"
     mqtt_port = 1883
@@ -19,7 +20,7 @@ class Infoscreen():
         self.blank = False
         self.stdscr = stdscr
         self.lock = Lock()
-        
+
         self.registered_windows = list()
 
         self._init_windows()
@@ -32,52 +33,56 @@ class Infoscreen():
         self.mqttc = mqtt.Client(clientid)
         self.mqttc.on_message = self.on_message
         self.mqttc.on_connect = self.on_connect
-        self.mqttc.will_set(self.heartbeat_topic, bytearray(b'\x00'), 2, True)
+        self.mqttc.will_set(self.heartbeat_topic, bytearray(b"\x00"), 2, True)
 
         self.mqttc.connect(self.mqtt_host, self.mqtt_port, self.mqtt_keepalive)
 
         self.mqttc.loop_start()
 
     def _init_windows(self):
-        
-        raise NotImplementedError('Abstract method')
+
+        raise NotImplementedError("Abstract method")
 
     def on_connect(self, a, b, c, rc):
 
         if rc != 0:
-            sys.exit(1) # connect failed # TODO
+            sys.exit(1)  # connect failed # TODO
 
         else:
 
-            self.mqttc.subscribe([
+            self.mqttc.subscribe(
+                [
                     listener["subscribe"]
                     for registration in self.registered_windows
                     for listener in registration["listeners"]
-                ])
+                ]
+            )
 
-            self.mqttc.publish(self.heartbeat_topic, bytearray(b'\x01'), 2, retain=True)
-    
+            self.mqttc.publish(self.heartbeat_topic, bytearray(b"\x01"), 2, retain=True)
+
     def add_window(self, window, listeners):
-        self.registered_windows.append({
-                "window":window,
+        self.registered_windows.append(
+            {
+                "window": window,
                 "listeners": [
-                        {
-                            "custom"    : listener["custom"] if "custom" in listener else False,
-                            "subscribe" : listener["subscribe"] if "subscribe" in listener else None,
-                            "json"      : listener["json"] if "json" in listener else True,
-                            "utf8"      : listener["utf8"] if "utf8" in listener else True,
-                            "callback"  : listener["callback"]
-                        }
-                        
-                        for listener in listeners
-                    ]
-            })
-        
-    
+                    {
+                        "custom": listener["custom"] if "custom" in listener else False,
+                        "subscribe": (
+                            listener["subscribe"] if "subscribe" in listener else None
+                        ),
+                        "json": listener["json"] if "json" in listener else True,
+                        "utf8": listener["utf8"] if "utf8" in listener else True,
+                        "callback": listener["callback"],
+                    }
+                    for listener in listeners
+                ],
+            }
+        )
+
     def on_message(self, client, userdata, message):
 
         self.lock.acquire()
-        
+
         try:
             for registration in self.registered_windows:
                 for listener in registration["listeners"]:
@@ -88,9 +93,14 @@ class Infoscreen():
                             payload = message.payload
                             if listener["json"]:
                                 try:
-                                    payload = json.loads(message.payload.decode("utf-8"))
+                                    payload = json.loads(
+                                        message.payload.decode("utf-8")
+                                    )
                                 except Exception as msg:
-                                    print("An error occured while parsing JSON for topic \"%s\" : %s" % (message.topic, str(msg)) )
+                                    print(
+                                        'An error occured while parsing JSON for topic "%s" : %s'
+                                        % (message.topic, str(msg))
+                                    )
                             elif listener["utf8"]:
                                 payload = message.payload.decode("utf-8")
                             listener["callback"](payload)
@@ -107,16 +117,16 @@ class Infoscreen():
         while True:
 
             self.lock.acquire()
-            
+
             self.stdscr.clear()
             for registration in self.registered_windows:
                 if registration["window"] is not None:
                     registration["window"].show()
-                
+
             self.lock.release()
-            
+
             time.sleep(0.1)
-            
+
 
 #        if (not isOn['tuer'] and not blank):
 #            blank = True
