@@ -2,6 +2,7 @@
 
 import curses
 
+
 class weatherwin:
     def __init__(self, xpos, ypos, width, height):
         self.win = curses.newwin(height, width, ypos, xpos)
@@ -11,9 +12,7 @@ class weatherwin:
         self.ypos = ypos
 
     def update(self, data):
-        self.win.addstr(0,0,data)
+        self.win.addstr(0, 0, data)
 
     def show(self):
         self.win.refresh()
-
- 
